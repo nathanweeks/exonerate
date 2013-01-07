@@ -1,0 +1,745 @@
+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ../..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+CC = @CC@
+GLIB_CONFIG = @GLIB_CONFIG@
+HAVE_LIB = @HAVE_LIB@
+LIB = @LIB@
+LTLIB = @LTLIB@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+PKG_CONFIG = @PKG_CONFIG@
+VERSION = @VERSION@
+codegen_extra_ldadd = @codegen_extra_ldadd@
+codegen_extra_sources = @codegen_extra_sources@
+custom_guint64_format = @custom_guint64_format@
+datarootdir = @datarootdir@
+glib_cflags = @glib_cflags@
+glib_libs = @glib_libs@
+host = @host@
+installed_util_list = @installed_util_list@
+source_root_dir = @source_root_dir@
+use_pthreads = @use_pthreads@
+
+bin_PROGRAMS = @installed_util_list@
+
+EXTRA_PROGRAMS = fastaclean fastaclip fastachecksum fastacomposition                fastadiff fastaexplode fastafetch fastahardmask                fastaindex fastalength fastanrdb fastaoverlap                fastareformat fastaremove fastarevcomp fastasoftmask                fastasort fastasplit fastasubseq fastatranslate                fastavalidcds fasta2esd fastaannotatecdna                esd2esi
+
+
+INCLUDES = -I$(top_srcdir)/src/sequence              -I$(top_srcdir)/src/database              -I$(top_srcdir)/src/struct                -I$(top_srcdir)/src/comparison            -I$(top_srcdir)/src/general
+
+
+LDADD = $(top_srcdir)/src/sequence/sequence.o            $(top_srcdir)/src/sequence/alphabet.o            $(top_srcdir)/src/sequence/splice.o              $(top_srcdir)/src/sequence/translate.o           $(top_srcdir)/src/database/fastadb.o             $(top_srcdir)/src/general/argument.o             $(top_srcdir)/src/general/compoundfile.o         $(top_srcdir)/src/general/lineparse.o            $(top_srcdir)/src/struct/sparsecache.o           $(top_srcdir)/src/struct/matrix.o                -lm
+
+
+fastaclean_SOURCES = fastaclean.c
+fastaclip_SOURCES = fastaclip.c
+fastachecksum_SOURCES = fastachecksum.c
+fastacomposition_SOURCES = fastacomposition.c
+fastadiff_SOURCES = fastadiff.c
+fastaexplode_SOURCES = fastaexplode.c
+fastafetch_SOURCES = fastafetch.c
+fastahardmask_SOURCES = fastahardmask.c
+fastaindex_SOURCES = fastaindex.c
+fastalength_SOURCES = fastalength.c
+fastanrdb_SOURCES = fastanrdb.c
+fastaoverlap_SOURCES = fastaoverlap.c
+fastareformat_SOURCES = fastareformat.c
+fastaremove_SOURCES = fastaremove.c
+fastarevcomp_SOURCES = fastarevcomp.c
+fastasoftmask_SOURCES = fastasoftmask.c
+fastasort_SOURCES = fastasort.c
+fastasplit_SOURCES = fastasplit.c
+fastasubseq_SOURCES = fastasubseq.c
+fastatranslate_SOURCES = fastatranslate.c
+fasta2esd_SOURCES = fasta2esd.c
+fastaannotatecdna_SOURCES = fastaannotatecdna.c
+esd2esi_SOURCES = esd2esi.c
+
+fasta2esd_LDADD = $(top_srcdir)/src/database/dataset.o                    $(top_srcdir)/src/struct/bitarray.o                     $(LDADD)
+
+
+esd2esi_LDADD = $(top_srcdir)/src/database/dataset.o                      $(top_srcdir)/src/database/index.o                        $(top_srcdir)/src/general/threadref.o                     $(top_srcdir)/src/struct/bitarray.o                       $(top_srcdir)/src/struct/vfsm.o                           $(top_srcdir)/src/struct/pqueue.o                         $(top_srcdir)/src/struct/recyclebin.o                     $(top_srcdir)/src/struct/rangetree.o                      $(top_srcdir)/src/struct/noitree.o                        $(top_srcdir)/src/struct/splaytree.o                      $(top_srcdir)/src/sequence/submat.o                       $(top_srcdir)/src/sequence/codonsubmat.o                  $(top_srcdir)/src/comparison/wordhood.o                   $(top_srcdir)/src/comparison/hspset.o                     $(top_srcdir)/src/comparison/match.o                      $(LDADD)
+
+
+EXTRA_fastavalidcds_SOURCES = fastavalidcds.c
+
+# Files to clear away
+
+MAINTAINERCLEANFILES = Makefile.in
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) 
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+fastaclean_OBJECTS =  fastaclean.o
+fastaclean_LDADD = $(LDADD)
+fastaclean_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaclean_LDFLAGS = 
+fastaclip_OBJECTS =  fastaclip.o
+fastaclip_LDADD = $(LDADD)
+fastaclip_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaclip_LDFLAGS = 
+fastachecksum_OBJECTS =  fastachecksum.o
+fastachecksum_LDADD = $(LDADD)
+fastachecksum_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastachecksum_LDFLAGS = 
+fastacomposition_OBJECTS =  fastacomposition.o
+fastacomposition_LDADD = $(LDADD)
+fastacomposition_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastacomposition_LDFLAGS = 
+fastadiff_OBJECTS =  fastadiff.o
+fastadiff_LDADD = $(LDADD)
+fastadiff_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastadiff_LDFLAGS = 
+fastaexplode_OBJECTS =  fastaexplode.o
+fastaexplode_LDADD = $(LDADD)
+fastaexplode_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaexplode_LDFLAGS = 
+fastafetch_OBJECTS =  fastafetch.o
+fastafetch_LDADD = $(LDADD)
+fastafetch_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastafetch_LDFLAGS = 
+fastahardmask_OBJECTS =  fastahardmask.o
+fastahardmask_LDADD = $(LDADD)
+fastahardmask_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastahardmask_LDFLAGS = 
+fastaindex_OBJECTS =  fastaindex.o
+fastaindex_LDADD = $(LDADD)
+fastaindex_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaindex_LDFLAGS = 
+fastalength_OBJECTS =  fastalength.o
+fastalength_LDADD = $(LDADD)
+fastalength_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastalength_LDFLAGS = 
+fastanrdb_OBJECTS =  fastanrdb.o
+fastanrdb_LDADD = $(LDADD)
+fastanrdb_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastanrdb_LDFLAGS = 
+fastaoverlap_OBJECTS =  fastaoverlap.o
+fastaoverlap_LDADD = $(LDADD)
+fastaoverlap_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaoverlap_LDFLAGS = 
+fastareformat_OBJECTS =  fastareformat.o
+fastareformat_LDADD = $(LDADD)
+fastareformat_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastareformat_LDFLAGS = 
+fastaremove_OBJECTS =  fastaremove.o
+fastaremove_LDADD = $(LDADD)
+fastaremove_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaremove_LDFLAGS = 
+fastarevcomp_OBJECTS =  fastarevcomp.o
+fastarevcomp_LDADD = $(LDADD)
+fastarevcomp_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastarevcomp_LDFLAGS = 
+fastasoftmask_OBJECTS =  fastasoftmask.o
+fastasoftmask_LDADD = $(LDADD)
+fastasoftmask_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastasoftmask_LDFLAGS = 
+fastasort_OBJECTS =  fastasort.o
+fastasort_LDADD = $(LDADD)
+fastasort_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastasort_LDFLAGS = 
+fastasplit_OBJECTS =  fastasplit.o
+fastasplit_LDADD = $(LDADD)
+fastasplit_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastasplit_LDFLAGS = 
+fastasubseq_OBJECTS =  fastasubseq.o
+fastasubseq_LDADD = $(LDADD)
+fastasubseq_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastasubseq_LDFLAGS = 
+fastatranslate_OBJECTS =  fastatranslate.o
+fastatranslate_LDADD = $(LDADD)
+fastatranslate_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastatranslate_LDFLAGS = 
+fastavalidcds_SOURCES = fastavalidcds.c
+fastavalidcds_OBJECTS =  fastavalidcds.o
+fastavalidcds_LDADD = $(LDADD)
+fastavalidcds_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastavalidcds_LDFLAGS = 
+fasta2esd_OBJECTS =  fasta2esd.o
+fasta2esd_DEPENDENCIES =  $(top_srcdir)/src/database/dataset.o \
+$(top_srcdir)/src/struct/bitarray.o \
+$(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fasta2esd_LDFLAGS = 
+fastaannotatecdna_OBJECTS =  fastaannotatecdna.o
+fastaannotatecdna_LDADD = $(LDADD)
+fastaannotatecdna_DEPENDENCIES =  $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+fastaannotatecdna_LDFLAGS = 
+esd2esi_OBJECTS =  esd2esi.o
+esd2esi_DEPENDENCIES =  $(top_srcdir)/src/database/dataset.o \
+$(top_srcdir)/src/database/index.o \
+$(top_srcdir)/src/general/threadref.o \
+$(top_srcdir)/src/struct/bitarray.o $(top_srcdir)/src/struct/vfsm.o \
+$(top_srcdir)/src/struct/pqueue.o $(top_srcdir)/src/struct/recyclebin.o \
+$(top_srcdir)/src/struct/rangetree.o $(top_srcdir)/src/struct/noitree.o \
+$(top_srcdir)/src/struct/splaytree.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/comparison/wordhood.o \
+$(top_srcdir)/src/comparison/hspset.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/database/fastadb.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/compoundfile.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o
+esd2esi_LDFLAGS = 
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP_ENV = --best
+SOURCES = $(fastaclean_SOURCES) $(fastaclip_SOURCES) $(fastachecksum_SOURCES) $(fastacomposition_SOURCES) $(fastadiff_SOURCES) $(fastaexplode_SOURCES) $(fastafetch_SOURCES) $(fastahardmask_SOURCES) $(fastaindex_SOURCES) $(fastalength_SOURCES) $(fastanrdb_SOURCES) $(fastaoverlap_SOURCES) $(fastareformat_SOURCES) $(fastaremove_SOURCES) $(fastarevcomp_SOURCES) $(fastasoftmask_SOURCES) $(fastasort_SOURCES) $(fastasplit_SOURCES) $(fastasubseq_SOURCES) $(fastatranslate_SOURCES) fastavalidcds.c $(EXTRA_fastavalidcds_SOURCES) $(fasta2esd_SOURCES) $(fastaannotatecdna_SOURCES) $(esd2esi_SOURCES)
+OBJECTS = $(fastaclean_OBJECTS) $(fastaclip_OBJECTS) $(fastachecksum_OBJECTS) $(fastacomposition_OBJECTS) $(fastadiff_OBJECTS) $(fastaexplode_OBJECTS) $(fastafetch_OBJECTS) $(fastahardmask_OBJECTS) $(fastaindex_OBJECTS) $(fastalength_OBJECTS) $(fastanrdb_OBJECTS) $(fastaoverlap_OBJECTS) $(fastareformat_OBJECTS) $(fastaremove_OBJECTS) $(fastarevcomp_OBJECTS) $(fastasoftmask_OBJECTS) $(fastasort_OBJECTS) $(fastasplit_OBJECTS) $(fastasubseq_OBJECTS) $(fastatranslate_OBJECTS) fastavalidcds.o $(fasta2esd_OBJECTS) $(fastaannotatecdna_OBJECTS) $(esd2esi_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps src/util/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+fastaclean: $(fastaclean_OBJECTS) $(fastaclean_DEPENDENCIES)
+	@rm -f fastaclean
+	$(LINK) $(fastaclean_LDFLAGS) $(fastaclean_OBJECTS) $(fastaclean_LDADD) $(LIBS)
+
+fastaclip: $(fastaclip_OBJECTS) $(fastaclip_DEPENDENCIES)
+	@rm -f fastaclip
+	$(LINK) $(fastaclip_LDFLAGS) $(fastaclip_OBJECTS) $(fastaclip_LDADD) $(LIBS)
+
+fastachecksum: $(fastachecksum_OBJECTS) $(fastachecksum_DEPENDENCIES)
+	@rm -f fastachecksum
+	$(LINK) $(fastachecksum_LDFLAGS) $(fastachecksum_OBJECTS) $(fastachecksum_LDADD) $(LIBS)
+
+fastacomposition: $(fastacomposition_OBJECTS) $(fastacomposition_DEPENDENCIES)
+	@rm -f fastacomposition
+	$(LINK) $(fastacomposition_LDFLAGS) $(fastacomposition_OBJECTS) $(fastacomposition_LDADD) $(LIBS)
+
+fastadiff: $(fastadiff_OBJECTS) $(fastadiff_DEPENDENCIES)
+	@rm -f fastadiff
+	$(LINK) $(fastadiff_LDFLAGS) $(fastadiff_OBJECTS) $(fastadiff_LDADD) $(LIBS)
+
+fastaexplode: $(fastaexplode_OBJECTS) $(fastaexplode_DEPENDENCIES)
+	@rm -f fastaexplode
+	$(LINK) $(fastaexplode_LDFLAGS) $(fastaexplode_OBJECTS) $(fastaexplode_LDADD) $(LIBS)
+
+fastafetch: $(fastafetch_OBJECTS) $(fastafetch_DEPENDENCIES)
+	@rm -f fastafetch
+	$(LINK) $(fastafetch_LDFLAGS) $(fastafetch_OBJECTS) $(fastafetch_LDADD) $(LIBS)
+
+fastahardmask: $(fastahardmask_OBJECTS) $(fastahardmask_DEPENDENCIES)
+	@rm -f fastahardmask
+	$(LINK) $(fastahardmask_LDFLAGS) $(fastahardmask_OBJECTS) $(fastahardmask_LDADD) $(LIBS)
+
+fastaindex: $(fastaindex_OBJECTS) $(fastaindex_DEPENDENCIES)
+	@rm -f fastaindex
+	$(LINK) $(fastaindex_LDFLAGS) $(fastaindex_OBJECTS) $(fastaindex_LDADD) $(LIBS)
+
+fastalength: $(fastalength_OBJECTS) $(fastalength_DEPENDENCIES)
+	@rm -f fastalength
+	$(LINK) $(fastalength_LDFLAGS) $(fastalength_OBJECTS) $(fastalength_LDADD) $(LIBS)
+
+fastanrdb: $(fastanrdb_OBJECTS) $(fastanrdb_DEPENDENCIES)
+	@rm -f fastanrdb
+	$(LINK) $(fastanrdb_LDFLAGS) $(fastanrdb_OBJECTS) $(fastanrdb_LDADD) $(LIBS)
+
+fastaoverlap: $(fastaoverlap_OBJECTS) $(fastaoverlap_DEPENDENCIES)
+	@rm -f fastaoverlap
+	$(LINK) $(fastaoverlap_LDFLAGS) $(fastaoverlap_OBJECTS) $(fastaoverlap_LDADD) $(LIBS)
+
+fastareformat: $(fastareformat_OBJECTS) $(fastareformat_DEPENDENCIES)
+	@rm -f fastareformat
+	$(LINK) $(fastareformat_LDFLAGS) $(fastareformat_OBJECTS) $(fastareformat_LDADD) $(LIBS)
+
+fastaremove: $(fastaremove_OBJECTS) $(fastaremove_DEPENDENCIES)
+	@rm -f fastaremove
+	$(LINK) $(fastaremove_LDFLAGS) $(fastaremove_OBJECTS) $(fastaremove_LDADD) $(LIBS)
+
+fastarevcomp: $(fastarevcomp_OBJECTS) $(fastarevcomp_DEPENDENCIES)
+	@rm -f fastarevcomp
+	$(LINK) $(fastarevcomp_LDFLAGS) $(fastarevcomp_OBJECTS) $(fastarevcomp_LDADD) $(LIBS)
+
+fastasoftmask: $(fastasoftmask_OBJECTS) $(fastasoftmask_DEPENDENCIES)
+	@rm -f fastasoftmask
+	$(LINK) $(fastasoftmask_LDFLAGS) $(fastasoftmask_OBJECTS) $(fastasoftmask_LDADD) $(LIBS)
+
+fastasort: $(fastasort_OBJECTS) $(fastasort_DEPENDENCIES)
+	@rm -f fastasort
+	$(LINK) $(fastasort_LDFLAGS) $(fastasort_OBJECTS) $(fastasort_LDADD) $(LIBS)
+
+fastasplit: $(fastasplit_OBJECTS) $(fastasplit_DEPENDENCIES)
+	@rm -f fastasplit
+	$(LINK) $(fastasplit_LDFLAGS) $(fastasplit_OBJECTS) $(fastasplit_LDADD) $(LIBS)
+
+fastasubseq: $(fastasubseq_OBJECTS) $(fastasubseq_DEPENDENCIES)
+	@rm -f fastasubseq
+	$(LINK) $(fastasubseq_LDFLAGS) $(fastasubseq_OBJECTS) $(fastasubseq_LDADD) $(LIBS)
+
+fastatranslate: $(fastatranslate_OBJECTS) $(fastatranslate_DEPENDENCIES)
+	@rm -f fastatranslate
+	$(LINK) $(fastatranslate_LDFLAGS) $(fastatranslate_OBJECTS) $(fastatranslate_LDADD) $(LIBS)
+
+fastavalidcds: $(fastavalidcds_OBJECTS) $(fastavalidcds_DEPENDENCIES)
+	@rm -f fastavalidcds
+	$(LINK) $(fastavalidcds_LDFLAGS) $(fastavalidcds_OBJECTS) $(fastavalidcds_LDADD) $(LIBS)
+
+fasta2esd: $(fasta2esd_OBJECTS) $(fasta2esd_DEPENDENCIES)
+	@rm -f fasta2esd
+	$(LINK) $(fasta2esd_LDFLAGS) $(fasta2esd_OBJECTS) $(fasta2esd_LDADD) $(LIBS)
+
+fastaannotatecdna: $(fastaannotatecdna_OBJECTS) $(fastaannotatecdna_DEPENDENCIES)
+	@rm -f fastaannotatecdna
+	$(LINK) $(fastaannotatecdna_LDFLAGS) $(fastaannotatecdna_OBJECTS) $(fastaannotatecdna_LDADD) $(LIBS)
+
+esd2esi: $(esd2esi_OBJECTS) $(esd2esi_DEPENDENCIES)
+	@rm -f esd2esi
+	$(LINK) $(esd2esi_LDFLAGS) $(esd2esi_OBJECTS) $(esd2esi_LDADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = src/util
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am: install-binPROGRAMS
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-binPROGRAMS
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(bindir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-generic \
+		mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-binPROGRAMS distclean-compile distclean-tags \
+		distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
+maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

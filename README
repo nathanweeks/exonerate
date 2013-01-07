@@ -1,0 +1,295 @@
+README file for exonerate package.
+
+FAQs
+
+-----------------------------------------------------------------
+General
+=======
+
+What does this package contain ?
+------------------------------
+
+    This package contains exonerate and its libraries.
+    Exonerate is a general purpose tool for biological
+    sequence comparison.  The libraries are provided with
+    the intention of providing general utility for development
+    of various sequence comparison programs.
+
+    This package was previously called ensembl-nci
+    to reflect the Nucleotide Comparison Interface
+    that was behind much of the code.  This interface has now
+    being dropped, along with the name.
+
+How do I get the latest version ?
+-------------------------------
+
+    The latest version is in the exonerate CVS repository
+    available from http://www.ensembl.org/
+    To do this with anonymous CVS, you need to do:
+
+    (with bash)
+  export CVSROOT=":pserver:cvsuser@cvs.sanger.ac.uk:/cvsroot/ensembl"
+
+    (with tcsh)
+  setenv CVSROOT ":pserver:cvsuser@cvs.sanger.ac.uk:/cvsroot/ensembl"
+
+    Then:
+        cvs login # (password CVSUSER)
+        cvs co exonerate
+
+    This will checkout the CVS head which is unstable.
+    To get the latest stable version, use:
+        cvs co -r branch-0-9-0 exonerate
+    or download the latest tarball from:
+        http://www.ebi.ac.uk/~guy/exonerate/
+
+How do I build exonerate ?
+------------------------
+
+    If you have a version from CVS, it is a development version,
+    so you need a machine with the GNU autoconf/automake tools.
+    You need to do:
+        ./maintain.sh ready
+    Then proceed as for a tarball releases.
+
+    For a tarball release, you just need to do:
+        ./configure
+        make
+
+    Use "./configure --help" to see the configure options.
+
+    If you are using a stable (tarball) version,
+    then just use ./configure then make.
+
+    It is a good idea to also run "make check" to ensure
+    that everything is working OK on you machine.
+
+How do I build exonerate for profiling with gprof ?
+-------------------------------------------------
+
+    make clean
+    ./configure --disable-assert --enable-gprof
+    make
+
+What is glib ?
+------------
+
+    glib is the C library which gtk is based upon.
+    It is highly portable, and provides useful data structures,
+    and convenient functions for handling things like dynamic
+    libraries.
+
+    glib needs to be installed with at least version 1.2.0
+    to use with exonerate.  You can check this with the
+    command `glib-config --version`
+
+    glib is probably already installed on your system,
+    but is available from http://www.gtk.org/
+
+Under which license is the code made available ?
+----------------------------------------------
+
+    GPL, version 3.  See: http://www.gnu.org/licenses/gpl.txt
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU General Public License for more details.
+    (included in the file COPYING distributed with this package)
+
+Which platforms will this run on ?
+--------------------------------
+
+    The code has mostly been developed on GNU/Linux systems,
+    and is used mostly on Linux and alpha/OSF1 machines,
+    so it works well with those, but should be portable
+    to other architectures.
+
+Is there a paper describing this ?
+--------------------------------
+
+    See: BMC Bioinformatics 2005, 6:31
+    "Automated generation of heuristics for biological sequence comparison"
+    http://www.biomedcentral.com/1471-2105/6/31
+
+    More papers to follow.
+
+How do I report a bug ?
+---------------------
+
+    Run the supplied script buginfo.sh in the top level directory
+    to report info about the system on which you have found a bug.
+
+    You can also try running "make check" to ensure
+    that all the tests pass on your platform.
+
+    Please supply enough information to make the bug reproducible,
+    including a command line and sample sequences where appropriate.
+
+    Then send all this info to guy@ebi.ac.uk or ensembl-dev@ebi.ac.uk
+
+How do I contribute to the project ?
+----------------------------------
+
+    PLEASE DO NOT TRY TO CHECK CODE DIRECTLY INTO CVS.
+
+    If you have a fix for a bug, or would like to contribute
+    a new feature or optimisation to the package, then please
+    prepare a patch for review.
+
+    The code in the patch must be available under the LGPL.
+
+    Unified diff output with 5 lines of context is the preferred
+    format for patches.  The easiest way to do this is to use CVS
+    to produce a diff against the version currently in the repository.
+    From the exonerate directory in the modified version, do:
+
+        cvs diff -u -5
+
+What else is there in this package ?
+----------------------------------
+
+    This code base also include the program iPCRess
+    (In-silico PCR Experiment Simulation System),
+    and also some utilities for manipulation of large fasta files.
+    These are not installed by default, but can be found
+    in the src/util directory.
+
+    I hope the names are fairly self explanatory.
+    Use ./fasta<whatever> -h for more info.
+
+    The utilities are:
+    esd2esi fasta2esd fastaannotatecdna fastachecksum
+    fastaclean fastaclip fastacomposition fastadiff fastaexplode
+    fastafetch fastahardmask fastaindex fastalength fastanrdb
+    fastaoverlap fastareformat fastaremove fastarevcomp fastasoftmask
+    fastasort fastasplit fastasubseq fastatranslate fastavalidcds
+
+
+How can I get more help ?
+-----------------------
+
+    Using any of the programs with -h or --help will
+    give you more information about the options available.
+
+    There are man pages available for exonerate, exonerate-server and ipcress.
+    If they have not yet been installed, you can view them
+    from the source distribution using:
+
+    nroff -man doc/man/man1/exonerate.1 | less
+    nroff -man doc/man/man1/exonerate-server.1 | less
+    nroff -man doc/man/man1/ipcress.1 | less
+
+    Failing that, you can email me: guy@ebi.ac.uk
+
+-----------------------------------------------------------------
+
+Exonerate specific questions
+============================
+
+How do I make exonerate run faster ?
+----------------------------------
+
+    Checklist:
+      o Did you ./configure --disable-assert ?
+      o Are the sequences being read from local disk ?
+      o Are the sequences repeat masked with RepeatMasker and dust ?
+      o Are you using the default parameters ?
+      o Are you multiplexing the query and using the -M flag ?
+
+    Quick and dirty searching parameters:
+      -w 16 -t 80 -H 80 -D 5 -a 1000 -m 1024
+
+Why is it taking ages to build ?
+------------------------------
+
+    Exonerate uses the C4 dynamic programming library,
+    which optimises the viterbi algorithm by using code
+    generation.  About 1,000,000 of code is generated
+    by default for efficient viterbi calculations
+    of the various models.
+
+    All the generated code for this is written into
+    the codegen directory.
+
+    The environment variables $C4_CC, $C4_LD, $C4_CCFLAGS
+    and $C4_LDFLAGS can be used to change the behaviour
+    during the code generation.  The linking can be modified
+    by using $C4_AR, $C4_AR_INIT and $C4_AR_APPEND
+    (see examples below).
+
+    If you only want to use exonerate for a couple of
+    models, you can speed up the compilation (and reduce
+    the executable size) by specifying which models to
+    generate code for by using $C4_COMPILED_MODELS.
+    eg.  export C4_COMPILED_MODELS="est2genome protein2genome"
+
+    If you try to run exonerate on a model for which it does
+    not have code generation, a warning is issued, and the
+    viterbi algorithm will run much more slowly.
+
+
+
+
+-----------------------------------------------------------------
+
+--
+
+Farm Notes:
+----------
+
+    Linux:
+# For Intel CC:
+# setenv PATH /opt/intel_cc_80/bin/:${PATH}
+# setenv LD_LIBRARY_PATH /opt/intel_cc_80/lib
+# setenv CC "icc"
+# setenv CFLAGS "-O3 -axWK"
+# setenv C4_CC $CC
+# setenv C4_CFLAGS "$CFLAGS"
+        ./maintain.sh ready
+        make clean
+        rm config.cache
+        rm -rf codegen
+        ./configure --enable-largefile
+            --prefix=/acari/work2/gs2/gs2/local/archive/Linux/1.0.0
+        make
+        make install-strip
+
+    TRU64:
+        rm -f config.cache
+        make clean
+#        setenv C4_AR "/bin/ar"
+#        setenv C4_AR_INIT "czr"
+#        setenv C4_AR_APPEND "zr"
+#        setenv CC "cc"
+#        setenv CFLAGS "-O3 -arch ev6 -fast"
+#        setenv CFLAGS "-O3 -arch ev67 -fast"
+        setenv C4_CC $CC
+        setenv C4_CFLAGS "$CFLAGS"
+        ./configure \
+            --prefix=/acari/work2/gs2/gs2/local/archive/OSF1/1.0.0
+        make
+        make install-strip
+
+    Darwin:
+       # export C4_AR_INIT="csq"
+       # export C4_AR_APPEND="sq"
+       ./configure --enable-largefile --prefix=/wherever/
+       make
+       make install-strip
+
+   ia64:
+       ./configure --enable-largefile
+            --prefix=/acari/work2/gs2/gs2/local/archive/ia64/1.0.0
+
+Making .deb
+
+dh_make -e guy@ebi.ac.uk -f ../exonerate-1.0.0.tar.gz
+vi debian/control
+  Section: science
+  Build-Depends: libglib1.2-dev
+as root: dpkg-buildpackage
+
+
+--
+

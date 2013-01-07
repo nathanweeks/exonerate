@@ -1,0 +1,365 @@
+
+2.3.0 -> 2.4.0
+    o Fixed many thread safety bugs
+    o Fixed bugs with large files over 4GB
+    o Modified client to work with multiple servers
+    o Fixed server to handle SIGPIPE
+    o Added support for FOSN input (can be files, directories or servers)
+    o Fixed bug with --wordambiguity and --wordjump (with normal FSM)
+    o Added %pS to --ryo (percent self score over equivalenced regions)
+
+2.2.0 -> 2.3.0
+    o Fixed several bugs with thread safety for exonerate-server
+    o Fixed bug with custom genetic codes not working
+    o Fixed bug with overflow of seedrepeat horizon in hspset
+    o Added passing of wordlimit params to server
+    o Implemented --cores option for multi-threaded alignment
+    o Added identity and similarity score for GFF genes and exons
+    o Increased default FSM memory limit to 256Mb
+    o Added --revcomp option to disable searching of reverse complement
+    o Fixed bug with compact-FSM (VFSM) based database searching
+    o Added --wordambiguity option for searching ambiguous reference seqs
+    o Fixed bug with esd2esi and .esd files >2Gb
+
+2.1.0 -> 2.2.0
+    o Fixed bug with esd2esi when softmasking is off
+    o Removed all GMemChunk usage due to caching problems with glib-2
+    o Fixed various minor memory leaks
+
+2.0.0 -> 2.1.0
+    o Fixed portability bugs for x86_64
+    o Added linecount: tag for long client:server messages
+    o Added setsockopt(TCP_NODELAY) to improved socket performance
+    o Changed server to use pthreads by default to avoid LSF memlimit problems
+    o Added faster implementation of Sequence_strncpy()
+    o Fixed bug with sequence caching
+    o Added -V 3 client-server debug code
+    o Prevented sub-optimial alignments below geneseed threshold from appearing
+    o Fixed sorting of translated indices
+    o Completed implementation of server-side geneseed
+    o Fixed bug with .esd file parsing
+    o Made compilation use glib2 by default
+    o Fixed SDP memory management bug
+    o Fixed segfault bug with --refine (Thanks to Don Gilbert)
+    o Improved splice site scoring
+    o Reverted to protein substition scoring for cd2g model
+    o Fixed bug with fasta parser and \r\n type newlines
+
+1.4.0 -> 2.0.0
+    o Modified exonerate to work in Client:Server mode
+    o Fixed --refine to work with SDP alignments
+    o Disabled codegen warnings from bootstrapper during compilation
+    o Added --geneticcode option for using alternative genetic codes
+    o Added --splice5 and --splice3 to allow alternative splice site PSSMs
+    o Fixed several bugs when scanning query sequences (eg. --forcescan query)
+    o Fixed to report query on forward strand whenever possible.
+    o Fixed --ryo sequence dumping with --bestn
+    o Fixed a bug with missing seeds when using --annotation
+    o Changed license to GPLv3
+    o Added protein2dna:bestfit and protein2genome:bestfit models
+      (works with exhaustive alignment only)
+
+1.3.0 -> 1.4.0
+    o Improved splice site cache memory management
+    o Added --geneseed option to speed up large-scale analysis
+    o Fixed a bug with 3'utr coordinates in GFF output
+    o Fixed a crash during GFF dumping when using glib2
+    o Added error message for failed seeks when input is stdin
+
+1.2.0 -> 1.3.0
+    o Fixed a bad memory leak in boundary.c
+    o Fixed bug with selenocysteines in query sequences
+    o Fixed bug with subsequence creation (and --ryo problems)
+    o Fixed a bug with transition mapping in reduced space alignments
+    o Removed variable_submat to fix bugs with codegen and allow speed ups
+    o Fixed bug with --usetlaaa and translated models
+    o Fixed emit calculation in HPair for BSDP
+    o Added C field to vulgar for disambiguation of codon matches
+    o Fixed bug with region finding in exhaustive DP codegen
+    o Fixed GFF bugs (start always < end) and off-by-one bug on rev strand
+    o Fixed bugs with codegen for cd2g
+    o Fixed bug with chained silent transitions in reduced space traceback
+    o Fixed bug broken bigseq comparisons
+    o Fixed --percent and --bestn ungapped comparisons
+
+1.1.0 -> 1.2.0
+    o Fixed bugs with SDP and short exons in spanned models
+    o Fixed bug with overwriting of some valid SDP span scores
+    o Fixed forward coordinates in GFF
+    o Added utr3,utr5 and cds fields to GFF output
+    o Fixed rounding bug in codonsubmat
+      (this prevented codon models working on some machines)
+    o Updated SDP codegen
+    o Fixed compilation to work with both glib-1 or glib-2
+    o Fixed phase macros
+    o Fixed build problems on OSF
+    o Added initial client/server code (nothing useful yet) 
+
+1.0.0 -> 1.1.0
+    o Replaced C4_Model_find_*() functions using names
+    o Fixed DP bug with non-local models
+    o Added Seeder and Match modules to support multi-hspset models
+    o Added %tcs etc to --ryo for dumping coding sequences
+    o Added CodonSubmat module
+    o Changed WordHood to work in codon space
+    o Changed Intron and Phase models to support joint introns for g2g
+    o Fixed bug with display of selenocysteine containing alignments
+    o Added --annotation option for cd2g model
+    o Fixed bug with introns in cigar strings
+    o Modified configure.in to compile cleanly on solaris
+    o Changed to use abstract sequences (requires optimisations)
+    o Fixed bug with --bestn tiebreaking
+    o Fixed bugs with suboptimal SDP alignments
+    o Simplified tracebacks for SDP
+    o Fixed bug with adjacent phased introns
+    o Added --codongapopen and --codongapextend
+    o Added new softmasking implementation
+
+0.9.1 -> 1.0.0
+    o Added code for sdp over spanned models
+    o Added initial code for UTR model
+    o Fixed various minor bugs
+    o Improved error reporting
+    o Added --fastasuffix option for filtering directory contents
+    o Made installation of utilities optional
+    o Fixed memory bug with --percent option
+    o Improved build system
+
+0.9.0 -> 0.9.1
+    o Fixed memory leak with SDP
+    o Bug fix to handle selenocysteines
+    o Fixed bug with words missing from word neighbourhood
+    o Fixed minor bugs and altered alignment display
+
+0.8.3 -> 0.9.0
+    o Added seeded dynamic programming modules
+      (does not yet work with models containing spans)
+    o Fixed --bestn to allow tiebreaking of identically scoring hits
+    o Fixed bug with lost error messages with --bestn
+    o Fixed bug with alignment display and --forwardcoordinates
+
+0.8.2 -> 0.8.3
+    o Fixed memory leak with BSDP
+    o Added BSAM module for whole chromosome alignment
+    o Added VFSM method of alignment seeding
+    o Rewrote word neighbourhood code for larger neighbourhoods
+    o Added --silent to fastafetch
+    o Added --alignmentwidth for alignent formatting
+    o Added --quality option for BSDP filtering
+    o Fixed tricky bug with suboptimal alignments in BSDP
+    o Fixed bug with reporting revcomp --bestn hits
+    o Marked non-consensus splice sites in alignment display
+    o Fixed bug with coordinates in alignment display
+    o Added frameshifts and split codons to gff output
+
+0.8.1 -> 0.8.2
+    o Optimised BSDP for repeat-rich genomic comparisons
+    o Fixed bug with intron phase bounds
+    o Added experimental BSDP repeat pruning algorithm
+    o Allowed input to be directories of fasta files
+    o Added example to the exonerate usage message
+    o Fixed bug in code generation
+    o Tightened span bounds
+    o Fixed a bug with Waterman-Eggert
+    o Removed old node_is_used code
+    o Fixed memory leak in phase model
+    o Added PCR product dumping to ipcress
+    o Fixed bug with softmasking translated sequences
+    o Sorted multiple input files on file size for --bestn performance
+
+0.8.0 -> 0.8.1
+    o Added module for codon usage calculations
+    o Fixed bug with phase model shadows
+
+0.7.2 -> 0.8.0
+    o Added support for Waterman-Eggert style suboptimal alignments
+    o Fixed bugs with Hughey-style DP traceback
+    o Fixed bugs with phase model
+    o Added option for alignment refinement
+    o Stopped glib error messages from dumping core
+    o Added --{query,target}chunk{id,total} for splitting up jobs
+    o Added start of test suite
+    o Fixed a bug with the shadow designation algorithm
+    o Added %e[ti] for equivalenced symbol counting
+    o Turned off --forcegtag by default
+    o Added query-specific score thresholds
+    o Added RangeTree-based HSP pairing algorithm
+    o Made Shadows go state->transition to fix span model problems
+    o Fixed BSDP to work properly with suboptimal alignments
+    o Fixed shadow propagation algorithm for derived models.
+    o Simplified phase model for new shadows
+
+0.7.1 -> 0.7.2
+    o Moved transition shields to calc
+    o Fixed a bug caused by shadow designation clashing
+    o Added shadow to intron model to apply min/max intron limits
+    o Fixed bugs with 3:3 HSP filtering
+    o Added general speedups to HSP code
+    o Bug fix for guessing database type of large files
+    o Added coding2genome model
+    o Simplified intron model (fewer states)
+    o Fixed bugs with shadow assignment ordering
+    o Fixed compilation when G_GNUC_EXTENSION not defined
+    o Added option for aggressive HSP filtering
+    o Removed old terminal_data/secondary_data system for C4_Calc
+    o Added Alphabet type to replace Sequence_Type and handle masking
+    o Improved softmasking implementation
+    o Removed all use of gmodule and renamed Plugin as Codegen,
+    o Changed bootstrapper for faster linking
+    o Separated Viterbi code from Optimal module
+    o Made bootstrapper use C4_COMPILED_MODEL_LIST
+    o Added Model_Type module
+    o Fixed sorting of results (on score) with --bestn
+
+0.7.0 -> 0.7.1
+    o Modularised code for frameshifts and intron phases
+    o Added support for DNA:DNA alignments at protein level
+    o Added Coding2Coding and started Genome2Genome model
+    o Added support for per-transition output with --ryo
+    o Made changes for compilation on OS-X
+    o Separated parameters for dna and protein level alignments
+    o Added dejavu exact repeat finding library (for reprobate)
+    o Fixed query softmasking and various other bugs
+    o Added speedups to approximate matching for ipcress
+    o Updated man pages
+    o Added transition shields to fix phase model problems
+    o Separated DP layout code from Optimal module
+
+0.6.7 -> 0.7.0
+    o Imported various fasta format file processing utilities
+    o Added --intronpenalty
+    o Added shadow transitions to C4
+    o Added protein2genomic model
+    o Refactored DP core by addition of Optimal_Data
+      and replacement of various hacks with proper 4D row data.
+    o Refactored codegen to use a single viterbi function per plugin.
+    o Modified Optimal_PatternMatrix system to reduce length
+      of generated code and decrease compile time.
+    o Fixed bootstrapper to use C4_CC and C4_CFLAGS
+    o Changed WordHood generation algorithm to utilise
+      separate input and output alphabets.
+    o Changed FSM implementation to allow more control when combining
+      words which are redundant or subsequences of each other.
+    o Imported ipcress and reimplemented most of it to handle
+      mismatches, mixed length and redundant primers etc.
+    o Changed ./configure --enable-gprof to work
+      with profiling version of libc6
+    o Changed argument handling code to parse lists from command line
+    o Added CompoundFile module
+    o Made exonerate work with multiple sequence query and target files
+    o Added more info to man page for exonerate
+    o Wrote man page for ipcress
+    o Added more sequence checking when using assertions.
+    o Fixed bug with display of equivalenced Ns
+    o Fixed attribute fields and off-by-one coordinate bugs in GFF.
+    o Added --bestn option for best-in-genome type searches etc.
+    o Changed --scanquery to --forcescan and made default selection
+      automatic based on sizes of input files.
+    o Fixed to parse non-standard __DATE__ format on OS-X.
+    o Simplified HPair code by addition of SAR module.
+    o Simplified HSPset code by using HSP horizon
+    o Simplified DNA2Protein model
+
+0.6.6 -> 0.6.7
+    o Fixed memory leak with SListSet
+    o Simplification of Portal/Span system
+    o Added short help (-h) command line synopsis
+    o Implemented C4 model inheritance
+    o Separated Intron model from est2genome code
+    o Added --wordhoodjump for large query inputs
+    o Added --showquerygff and --showtargetgff for GFF dumping
+    o Added --scanquery option and removed symmetric models
+
+0.6.5 -> 0.6.6
+    o Fixed bug with nascent HSPs
+    o Added --verbose option
+    o Added initial support for dna2protein and protein2dna models
+    o Renamed GenomicNER -> NER, allowed proteins alignments
+    o Added --showvulgar --ryo output options
+    o Fixed wordhood bug when Xs are present in nucleotide sequence
+    o Added Dynamite-style alignment labels
+    o Replaced model-specific alignment drawing code
+      with a single label-based implementation
+    o Fixed bugs with bootstrapper looking for (unnecessary) region
+      finding DP implementations for global models
+    o Added ungapped models - made ungapped model the default
+
+0.6.4 -> 0.6.5
+    o Added support for 2D spans
+    o Added support for genomic NER model
+    o Added basic speedups to Heuristic_Span_integrate
+    o Fixed bug with query multiplexing
+    o Added descriptions to alignment output
+    o Added softmasking support for query or target
+    o Added thresholds to Optimal_find_path (speed up)
+    o Added lots more command line options
+    o Updated man pages, added examples
+
+0.6.3 -> 0.6.4
+    o Added ability to align sequences exhaustively (slow)
+    o Major refactoring of all Optimal DP code
+    o Added Hughey-style reduced space DP implementation
+      (consisting of region finding, checkpoint finding,
+       continuation DP and associated tracebacks)
+    o Fixed more bugs with splice site prediction and gtag_only
+    o Fixed more bugs with non-diagonal HSPs
+    o Fixed bug with derived model creation
+    o Fixed several bugs with terminal matrix upper bound calculation
+      and end HSP component integration
+    o Added many more command line options and updated man page
+
+0.6.2 -> 0.6.3
+    o Added bootstrapping system for static linking of c4 models
+    o Added support for est2genome model
+    o Fixed bugs with est2genome model and splice site prediction
+    o Started module-localised command-line arguments
+    o Added C4_Model_configure_extra to supply C4_Model
+      with {init,exit}_{func,macro} like C4_Calc
+    o Updated man page (still incomplete)
+
+0.6.1 -> 0.6.2
+    o Added hub directory (and moved UGAM to it)
+    o Added GAM: Gapped Alignment Manager
+    o Added Analysis: High-level analysis object
+    o Added program directory and exonerate program
+    o Moved sequence_type from FastaDB to Sequence
+    o Moved BSDP threshold from Heuristic -> HPair
+    o Various other small fixes
+
+0.6.0 -> 0.6.1
+    o Added FastaDB_Seq_revcomp()
+    o Many minor bugs fixed (mostly found by valgrind)
+    o Simplified FSM memory management to use glib memchunks
+      (previous implemention was slower and buggy)
+    o Added SList: Efficient Single-linked Lists
+    o Many fixes for non-diagonal HSPs
+    o Added UGAM: UnGapped Alignment Manager
+
+0.5.0 -> 0.6.0
+    o Changed from ensembl-nci code base to exonerate
+    o Removal of NCI
+    o Major refactoring including many minor changes not listed here
+    o Build system now builds statically when using gprof
+    o Build system now supports gcov coverage analysis
+    o Build system supports "make check" to run tests
+      (a lot more of the tests do something worthwhile now)
+    o Started a man page for exonerate.  RTFM!
+    o FastaDB object changed to inherit from Sequence
+    o Sequence object includes strand information
+    o Rewrite of word neighbourhood generation using a new algorithm,
+      - now much faster and without memory overhead
+    o Allowed word neighbourhood generation by dropoff
+    o Added support for non-diagonal HSPsets
+    o Changed plugin system to recognise out-of-date modules
+    o Changed plugin system to support multi-architecture farms
+    o Added underflow/overflow protection to DP implementations
+    o Used Region object much more to simplify C4
+    o Changes to flow of control around C4<->HSP interfaces
+    o Added exit_func and exit_macro to C4_Calc
+    o Simplified splice site prediction coordinate system
+    o Converted est2genome model to use PSSM splice site prediction
+    o Fixed C4_Model_select() to avoid copying redundant calcs
+
+
+
+--

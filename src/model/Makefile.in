@@ -1,0 +1,777 @@
+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ../..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+CC = @CC@
+GLIB_CONFIG = @GLIB_CONFIG@
+HAVE_LIB = @HAVE_LIB@
+LIB = @LIB@
+LTLIB = @LTLIB@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+PKG_CONFIG = @PKG_CONFIG@
+VERSION = @VERSION@
+codegen_extra_ldadd = @codegen_extra_ldadd@
+codegen_extra_sources = @codegen_extra_sources@
+custom_guint64_format = @custom_guint64_format@
+datarootdir = @datarootdir@
+glib_cflags = @glib_cflags@
+glib_libs = @glib_libs@
+host = @host@
+installed_util_list = @installed_util_list@
+source_root_dir = @source_root_dir@
+use_pthreads = @use_pthreads@
+
+TESTS = edit_distance.test affine.test protein2dna.test            ner.test est2genome.test ungapped.test intron.test         protein2genome.test coding2coding.test                     frameshift.test coding2genome.test                         cdna2genome.test genome2genome.test                        phase.test modeltype.test
+
+
+noinst_PROGRAMS = $(TESTS) bootstrapper
+
+INCLUDES = -I$(top_srcdir)/src/c4                               -I$(top_srcdir)/src/bsdp                             -I$(top_srcdir)/src/sdp                              -I$(top_srcdir)/src/sequence                         -I$(top_srcdir)/src/general                          -I$(top_srcdir)/src/comparison                       -I$(top_srcdir)/src/struct                           -DSOURCE_ROOT_DIR="\"@source_root_dir@\""            -DGLIB_CFLAGS="\"@glib_cflags@\""
+
+
+SEQUENCE_OBJ = $(top_srcdir)/src/struct/sparsecache.o                 $(top_srcdir)/src/struct/matrix.o                      $(top_srcdir)/src/sequence/sequence.o                  $(top_srcdir)/src/sequence/alphabet.o                  $(top_srcdir)/src/sequence/splice.o                    $(top_srcdir)/src/sequence/translate.o                 $(top_srcdir)/src/general/argument.o                   $(top_srcdir)/src/general/lineparse.o                  $(top_srcdir)/src/general/threadref.o                  -lm
+
+
+ALIGNMENT_OBJ = $(top_srcdir)/src/comparison/match.o                     $(top_srcdir)/src/sequence/codonsubmat.o                 $(top_srcdir)/src/sequence/submat.o                      $(SEQUENCE_OBJ)
+
+
+C4_OBJECTS = $(top_srcdir)/src/struct/slist.o                    $(top_srcdir)/src/struct/rangetree.o                $(top_srcdir)/src/struct/recyclebin.o               $(top_srcdir)/src/c4/optimal.o                      $(top_srcdir)/src/c4/viterbi.o                      $(top_srcdir)/src/c4/layout.o                       $(top_srcdir)/src/c4/codegen.o                      $(top_srcdir)/src/c4/cgutil.o                       $(top_srcdir)/src/c4/alignment.o                    $(top_srcdir)/src/c4/region.o                       $(top_srcdir)/src/c4/c4.o                           $(top_srcdir)/src/c4/subopt.o                       $(ALIGNMENT_OBJ)
+
+
+# -lm should be at end of argument list for IRIX
+
+noinst_HEADERS = edit_distance.h affine.h protein2dna.h                         ner.h est2genome.h ungapped.h intron.h                         protein2genome.h coding2coding.h frameshift.h                  coding2genome.h genome2genome.h cdna2genome.h                  phase.h modeltype.h
+
+
+bootstrapper_SOURCES = bootstrapper.c modeltype.c                                            ungapped.c affine.c est2genome.c ner.c                                protein2dna.c protein2genome.c coding2coding.c                        coding2genome.c genome2genome.c cdna2genome.c                         frameshift.c intron.c phase.c
+
+bootstrapper_LDADD = $(top_srcdir)/src/struct/pqueue.o                               $(top_srcdir)/src/comparison/comparison.o                       $(top_srcdir)/src/comparison/hspset.o                           $(top_srcdir)/src/comparison/wordhood.o                         $(top_srcdir)/src/bsdp/heuristic.o                              $(top_srcdir)/src/sdp/sdp.o                                     $(top_srcdir)/src/sdp/scheduler.o                               $(top_srcdir)/src/sdp/straceback.o                              $(top_srcdir)/src/sdp/lookahead.o                               $(top_srcdir)/src/sdp/boundary.o                                $(C4_OBJECTS)
+
+
+edit_distance_test_SOURCES = edit_distance.test.c edit_distance.c
+edit_distance_test_LDADD = $(C4_OBJECTS)
+
+affine_test_SOURCES = affine.test.c affine.c ungapped.c
+affine_test_LDADD = $(C4_OBJECTS)
+
+protein2dna_test_SOURCES = protein2dna.test.c protein2dna.c                            affine.c ungapped.c frameshift.c
+
+protein2dna_test_LDADD = $(C4_OBJECTS)
+
+ner_test_SOURCES = ner.test.c ner.c affine.c ungapped.c
+ner_test_LDADD = $(C4_OBJECTS)
+
+est2genome_test_SOURCES = est2genome.test.c est2genome.c                           affine.c ungapped.c intron.c
+
+est2genome_test_LDADD = $(C4_OBJECTS)
+
+ungapped_test_SOURCES = ungapped.test.c ungapped.c
+ungapped_test_LDADD = $(C4_OBJECTS)
+
+intron_test_SOURCES = intron.test.c intron.c
+intron_test_LDADD = $(C4_OBJECTS)
+
+protein2genome_test_SOURCES = protein2genome.test.c protein2genome.c                              protein2dna.c ungapped.c intron.c                                    affine.c frameshift.c phase.c
+
+protein2genome_test_LDADD = $(C4_OBJECTS)
+
+coding2coding_test_SOURCES = coding2coding.test.c coding2coding.c                            affine.c ungapped.c frameshift.c
+
+coding2coding_test_LDADD = $(C4_OBJECTS)
+
+frameshift_test_SOURCES = frameshift.test.c frameshift.c
+frameshift_test_LDADD = $(C4_OBJECTS)
+
+coding2genome_test_SOURCES = coding2genome.test.c coding2genome.c                            coding2coding.c affine.c ungapped.c                               frameshift.c intron.c phase.c
+
+coding2genome_test_LDADD = $(C4_OBJECTS)
+
+cdna2genome_test_SOURCES = cdna2genome.test.c cdna2genome.c                                affine.c ungapped.c                                             frameshift.c intron.c phase.c                                   coding2coding.c coding2genome.c                                 est2genome.c
+
+cdna2genome_test_LDADD = $(C4_OBJECTS)
+
+genome2genome_test_SOURCES = genome2genome.test.c genome2genome.c                            coding2coding.c affine.c ungapped.c                               frameshift.c intron.c phase.c                                     coding2genome.c cdna2genome.c                                     est2genome.c
+
+genome2genome_test_LDADD = $(C4_OBJECTS)
+
+phase_test_SOURCES = phase.test.c phase.c intron.c
+phase_test_LDADD = $(C4_OBJECTS)
+
+modeltype_test_SOURCES = modeltype.test.c modeltype.c                                    ungapped.c affine.c est2genome.c ner.c                          protein2dna.c protein2genome.c                                  coding2coding.c coding2genome.c                                 genome2genome.c cdna2genome.c                                   frameshift.c phase.c intron.c
+
+modeltype_test_LDADD = $(C4_OBJECTS)
+
+# Files to clear away
+
+MAINTAINERCLEANFILES = Makefile.in
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(noinst_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) 
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+edit_distance_test_OBJECTS =  edit_distance.test.o edit_distance.o
+edit_distance_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+edit_distance_test_LDFLAGS = 
+affine_test_OBJECTS =  affine.test.o affine.o ungapped.o
+affine_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+affine_test_LDFLAGS = 
+protein2dna_test_OBJECTS =  protein2dna.test.o protein2dna.o affine.o \
+ungapped.o frameshift.o
+protein2dna_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+protein2dna_test_LDFLAGS = 
+ner_test_OBJECTS =  ner.test.o ner.o affine.o ungapped.o
+ner_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+ner_test_LDFLAGS = 
+est2genome_test_OBJECTS =  est2genome.test.o est2genome.o affine.o \
+ungapped.o intron.o
+est2genome_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+est2genome_test_LDFLAGS = 
+ungapped_test_OBJECTS =  ungapped.test.o ungapped.o
+ungapped_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+ungapped_test_LDFLAGS = 
+intron_test_OBJECTS =  intron.test.o intron.o
+intron_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+intron_test_LDFLAGS = 
+protein2genome_test_OBJECTS =  protein2genome.test.o protein2genome.o \
+protein2dna.o ungapped.o intron.o affine.o frameshift.o phase.o
+protein2genome_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+protein2genome_test_LDFLAGS = 
+coding2coding_test_OBJECTS =  coding2coding.test.o coding2coding.o \
+affine.o ungapped.o frameshift.o
+coding2coding_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+coding2coding_test_LDFLAGS = 
+frameshift_test_OBJECTS =  frameshift.test.o frameshift.o
+frameshift_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+frameshift_test_LDFLAGS = 
+coding2genome_test_OBJECTS =  coding2genome.test.o coding2genome.o \
+coding2coding.o affine.o ungapped.o frameshift.o intron.o phase.o
+coding2genome_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+coding2genome_test_LDFLAGS = 
+cdna2genome_test_OBJECTS =  cdna2genome.test.o cdna2genome.o affine.o \
+ungapped.o frameshift.o intron.o phase.o coding2coding.o \
+coding2genome.o est2genome.o
+cdna2genome_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+cdna2genome_test_LDFLAGS = 
+genome2genome_test_OBJECTS =  genome2genome.test.o genome2genome.o \
+coding2coding.o affine.o ungapped.o frameshift.o intron.o phase.o \
+coding2genome.o cdna2genome.o est2genome.o
+genome2genome_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+genome2genome_test_LDFLAGS = 
+phase_test_OBJECTS =  phase.test.o phase.o intron.o
+phase_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+phase_test_LDFLAGS = 
+modeltype_test_OBJECTS =  modeltype.test.o modeltype.o ungapped.o \
+affine.o est2genome.o ner.o protein2dna.o protein2genome.o \
+coding2coding.o coding2genome.o genome2genome.o cdna2genome.o \
+frameshift.o phase.o intron.o
+modeltype_test_DEPENDENCIES =  $(top_srcdir)/src/struct/slist.o \
+$(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+modeltype_test_LDFLAGS = 
+bootstrapper_OBJECTS =  bootstrapper.o modeltype.o ungapped.o affine.o \
+est2genome.o ner.o protein2dna.o protein2genome.o coding2coding.o \
+coding2genome.o genome2genome.o cdna2genome.o frameshift.o intron.o \
+phase.o
+bootstrapper_DEPENDENCIES =  $(top_srcdir)/src/struct/pqueue.o \
+$(top_srcdir)/src/comparison/comparison.o \
+$(top_srcdir)/src/comparison/hspset.o \
+$(top_srcdir)/src/comparison/wordhood.o \
+$(top_srcdir)/src/bsdp/heuristic.o $(top_srcdir)/src/sdp/sdp.o \
+$(top_srcdir)/src/sdp/scheduler.o $(top_srcdir)/src/sdp/straceback.o \
+$(top_srcdir)/src/sdp/lookahead.o $(top_srcdir)/src/sdp/boundary.o \
+$(top_srcdir)/src/struct/slist.o $(top_srcdir)/src/struct/rangetree.o \
+$(top_srcdir)/src/struct/recyclebin.o $(top_srcdir)/src/c4/optimal.o \
+$(top_srcdir)/src/c4/viterbi.o $(top_srcdir)/src/c4/layout.o \
+$(top_srcdir)/src/c4/codegen.o $(top_srcdir)/src/c4/cgutil.o \
+$(top_srcdir)/src/c4/alignment.o $(top_srcdir)/src/c4/region.o \
+$(top_srcdir)/src/c4/c4.o $(top_srcdir)/src/c4/subopt.o \
+$(top_srcdir)/src/comparison/match.o \
+$(top_srcdir)/src/sequence/codonsubmat.o \
+$(top_srcdir)/src/sequence/submat.o \
+$(top_srcdir)/src/struct/sparsecache.o \
+$(top_srcdir)/src/struct/matrix.o $(top_srcdir)/src/sequence/sequence.o \
+$(top_srcdir)/src/sequence/alphabet.o \
+$(top_srcdir)/src/sequence/splice.o \
+$(top_srcdir)/src/sequence/translate.o \
+$(top_srcdir)/src/general/argument.o \
+$(top_srcdir)/src/general/lineparse.o \
+$(top_srcdir)/src/general/threadref.o
+bootstrapper_LDFLAGS = 
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+HEADERS =  $(noinst_HEADERS)
+
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP_ENV = --best
+SOURCES = $(edit_distance_test_SOURCES) $(affine_test_SOURCES) $(protein2dna_test_SOURCES) $(ner_test_SOURCES) $(est2genome_test_SOURCES) $(ungapped_test_SOURCES) $(intron_test_SOURCES) $(protein2genome_test_SOURCES) $(coding2coding_test_SOURCES) $(frameshift_test_SOURCES) $(coding2genome_test_SOURCES) $(cdna2genome_test_SOURCES) $(genome2genome_test_SOURCES) $(phase_test_SOURCES) $(modeltype_test_SOURCES) $(bootstrapper_SOURCES)
+OBJECTS = $(edit_distance_test_OBJECTS) $(affine_test_OBJECTS) $(protein2dna_test_OBJECTS) $(ner_test_OBJECTS) $(est2genome_test_OBJECTS) $(ungapped_test_OBJECTS) $(intron_test_OBJECTS) $(protein2genome_test_OBJECTS) $(coding2coding_test_OBJECTS) $(frameshift_test_OBJECTS) $(coding2genome_test_OBJECTS) $(cdna2genome_test_OBJECTS) $(genome2genome_test_OBJECTS) $(phase_test_OBJECTS) $(modeltype_test_OBJECTS) $(bootstrapper_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps src/model/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-noinstPROGRAMS:
+
+clean-noinstPROGRAMS:
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+
+distclean-noinstPROGRAMS:
+
+maintainer-clean-noinstPROGRAMS:
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+edit_distance.test: $(edit_distance_test_OBJECTS) $(edit_distance_test_DEPENDENCIES)
+	@rm -f edit_distance.test
+	$(LINK) $(edit_distance_test_LDFLAGS) $(edit_distance_test_OBJECTS) $(edit_distance_test_LDADD) $(LIBS)
+
+affine.test: $(affine_test_OBJECTS) $(affine_test_DEPENDENCIES)
+	@rm -f affine.test
+	$(LINK) $(affine_test_LDFLAGS) $(affine_test_OBJECTS) $(affine_test_LDADD) $(LIBS)
+
+protein2dna.test: $(protein2dna_test_OBJECTS) $(protein2dna_test_DEPENDENCIES)
+	@rm -f protein2dna.test
+	$(LINK) $(protein2dna_test_LDFLAGS) $(protein2dna_test_OBJECTS) $(protein2dna_test_LDADD) $(LIBS)
+
+ner.test: $(ner_test_OBJECTS) $(ner_test_DEPENDENCIES)
+	@rm -f ner.test
+	$(LINK) $(ner_test_LDFLAGS) $(ner_test_OBJECTS) $(ner_test_LDADD) $(LIBS)
+
+est2genome.test: $(est2genome_test_OBJECTS) $(est2genome_test_DEPENDENCIES)
+	@rm -f est2genome.test
+	$(LINK) $(est2genome_test_LDFLAGS) $(est2genome_test_OBJECTS) $(est2genome_test_LDADD) $(LIBS)
+
+ungapped.test: $(ungapped_test_OBJECTS) $(ungapped_test_DEPENDENCIES)
+	@rm -f ungapped.test
+	$(LINK) $(ungapped_test_LDFLAGS) $(ungapped_test_OBJECTS) $(ungapped_test_LDADD) $(LIBS)
+
+intron.test: $(intron_test_OBJECTS) $(intron_test_DEPENDENCIES)
+	@rm -f intron.test
+	$(LINK) $(intron_test_LDFLAGS) $(intron_test_OBJECTS) $(intron_test_LDADD) $(LIBS)
+
+protein2genome.test: $(protein2genome_test_OBJECTS) $(protein2genome_test_DEPENDENCIES)
+	@rm -f protein2genome.test
+	$(LINK) $(protein2genome_test_LDFLAGS) $(protein2genome_test_OBJECTS) $(protein2genome_test_LDADD) $(LIBS)
+
+coding2coding.test: $(coding2coding_test_OBJECTS) $(coding2coding_test_DEPENDENCIES)
+	@rm -f coding2coding.test
+	$(LINK) $(coding2coding_test_LDFLAGS) $(coding2coding_test_OBJECTS) $(coding2coding_test_LDADD) $(LIBS)
+
+frameshift.test: $(frameshift_test_OBJECTS) $(frameshift_test_DEPENDENCIES)
+	@rm -f frameshift.test
+	$(LINK) $(frameshift_test_LDFLAGS) $(frameshift_test_OBJECTS) $(frameshift_test_LDADD) $(LIBS)
+
+coding2genome.test: $(coding2genome_test_OBJECTS) $(coding2genome_test_DEPENDENCIES)
+	@rm -f coding2genome.test
+	$(LINK) $(coding2genome_test_LDFLAGS) $(coding2genome_test_OBJECTS) $(coding2genome_test_LDADD) $(LIBS)
+
+cdna2genome.test: $(cdna2genome_test_OBJECTS) $(cdna2genome_test_DEPENDENCIES)
+	@rm -f cdna2genome.test
+	$(LINK) $(cdna2genome_test_LDFLAGS) $(cdna2genome_test_OBJECTS) $(cdna2genome_test_LDADD) $(LIBS)
+
+genome2genome.test: $(genome2genome_test_OBJECTS) $(genome2genome_test_DEPENDENCIES)
+	@rm -f genome2genome.test
+	$(LINK) $(genome2genome_test_LDFLAGS) $(genome2genome_test_OBJECTS) $(genome2genome_test_LDADD) $(LIBS)
+
+phase.test: $(phase_test_OBJECTS) $(phase_test_DEPENDENCIES)
+	@rm -f phase.test
+	$(LINK) $(phase_test_LDFLAGS) $(phase_test_OBJECTS) $(phase_test_LDADD) $(LIBS)
+
+modeltype.test: $(modeltype_test_OBJECTS) $(modeltype_test_DEPENDENCIES)
+	@rm -f modeltype.test
+	$(LINK) $(modeltype_test_LDFLAGS) $(modeltype_test_OBJECTS) $(modeltype_test_LDADD) $(LIBS)
+
+bootstrapper: $(bootstrapper_OBJECTS) $(bootstrapper_DEPENDENCIES)
+	@rm -f bootstrapper
+	$(LINK) $(bootstrapper_LDFLAGS) $(bootstrapper_OBJECTS) $(bootstrapper_LDADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = src/model
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+check-TESTS: $(TESTS)
+	@failed=0; all=0; \
+	srcdir=$(srcdir); export srcdir; \
+	for tst in $(TESTS); do \
+	  if test -f $$tst; then dir=.; \
+	  else dir="$(srcdir)"; fi; \
+	  if $(TESTS_ENVIRONMENT) $$dir/$$tst; then \
+	    all=`expr $$all + 1`; \
+	    echo "PASS: $$tst"; \
+	  elif test $$? -ne 77; then \
+	    all=`expr $$all + 1`; \
+	    failed=`expr $$failed + 1`; \
+	    echo "FAIL: $$tst"; \
+	  fi; \
+	done; \
+	if test "$$failed" -eq 0; then \
+	  banner="All $$all tests passed"; \
+	else \
+	  banner="$$failed of $$all tests failed"; \
+	fi; \
+	dashes=`echo "$$banner" | sed s/./=/g`; \
+	echo "$$dashes"; \
+	echo "$$banner"; \
+	echo "$$dashes"; \
+	test "$$failed" -eq 0
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS) $(HEADERS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+mostlyclean-am:  mostlyclean-noinstPROGRAMS mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-noinstPROGRAMS clean-compile clean-tags clean-generic \
+		mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-noinstPROGRAMS distclean-compile distclean-tags \
+		distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-noinstPROGRAMS distclean-noinstPROGRAMS \
+clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir check-TESTS info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

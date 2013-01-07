@@ -1,0 +1,5 @@
+
+SUBDIRS = man1
+
+MAINTAINERCLEANFILES = Makefile.in
+

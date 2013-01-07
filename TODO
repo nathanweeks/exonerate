@@ -1,0 +1,269 @@
+--
+IN_PROGRESS:
+-----------
+
+-//-
+
+reprobate, agglomerate
+
+Add extra stop codon penalty ?
+Share subopt between fwd/rev strands for translating models ?
+
+optimisation: stop codegen from testing match more than once per cell.
+optimisation: prevent subopt for certain optimals (eg. global).
+
+Fix configure_extra clashes from intron models
+(remove configure_extra altogether in intron?)
+
+./exonerate -m p2g pep.fa human.genomic -E --forcegtag no
+(score check problem)
+
+    - add dependency in codegen.c:188
+      replace when: codegen/model.o is older than model/model.o
+      (Make model expiry depend on parent model expiry)
+
+    - Expand man page intro, mention main features.
+
+-------------------------------------------------------------------
+--
+
+    o Separate code for DP scheduler from c4.[ch]
+
+    o Option for --refine (###check with region)
+      (needs to work with suboptimal alignments)
+       Refine strategies:
+        - none: default
+        - full: redo full alignment
+        - region: redo alignment region + edge boundary
+        - cobs: do alignment between all cobs points
+          in the final alignment. (or just 'clean' cobs points)
+          ( Also terminal cobs->corner,
+            terminal cobs->align_end + boundary )
+        - hsp : redo alignment hsp_set bound box + boundary
+        - align: bad splice sites
+                 low quality regions
+                 missing regions at ends.
+
+    o Split RedSpace from viterbi ?
+    o Move region finding, redspace etc outside of viterbi
+
+    o Allow hidden states / compound transitions for optimiser
+      (store chained transition for each transition, also state map,
+       must translate alignment afterwards)
+
+    o Fix u:t type models to check revcomp (analysis.c:133)
+      (Should translate target for trans2dna models)
+    o Add c2g model (c2c + tg intron): check working for reversed ?
+      (./exonerate c.f e.f -m c2g)
+
+    o Add phase 1->2 transition for phase model
+
+    o Add joint intron type to intron model (joint cis only)
+    o Add joint phase type, (9-state model)
+
+    o Split alignment: alignment->sequence/gene,ryo,label
+      combine Alignment output methods
+      add Alignment_traverse
+      have query_gene target_gene
+    o Add --ryo %[qt]f for frame (%[qt]b %3)
+        - need gene object ? can map all onto gene object ?
+          gene = Gene_create(alignment, on_query);
+          Gene_write_gff(gene);
+
+    o Separate GFF code from alignment
+    o Should GFF show all coordinates on the +ve strand? (jason_p2g eg)
+    o Report frameshifts (and in-frame stops) in GFF
+
+    o GAM_Type_Data
+
+    o Rearrange C4/optimal:
+        1 RedSpace: subalignment,checkpoint,recursion,traceback
+    problem with two different cell sizes
+        2 Viterbi: interpreted,codegen,optimal_data,optimal_mode
+        3 SubOpt: store,region,macros
+        4 OptModel: dp model optimiser eg. [-O->] => [->]
+        5 OPair: create,destroy,next_score,next_path
+                (make HPair same interface)
+        6 Optimal: optimal_type,find_score,find_path
+    o Refactor Heuristic (and HPair) to clarify heuristic model
+      representation (use (shared?) simple model object ?)
+
+    o Make interpreted and codegen implementations more similar.
+    o Need Alignment_traverse() to handle shadow setting etc.
+      ( Adapt from Alignment_has_valid_alignment() )
+    o Implement --verbose <level> or --verbose <typemask>
+       (or have module-specific verbose options ?)
+
+    o Introduce chain type/chain object ? [dna|protein|other]
+        - replace C4 user_data / terminal_data system
+        - allow multiple chain types to be used with some models
+
+    o Make all Optimal_Mode find_{region,score,path,checkpoints}
+      inherit from basic model definitions
+    o Command line meta-options
+    o Separation of C4 runtime and compile time requirements
+      (eg. upper bounds for calcs not required at compile time
+           - fix this with model-specific params ?)
+
+-//-
+
+sequence/gene: create(dna_seq), destroy, add_exon
+sequence/alphabet: stuff from Sequence_{Type,Filter} also masking
+
+SubOpt: create(alignment), allow exclusion in viterbi
+Alignment: Alignment_build_gene
+
+-//-
+
+BUGS:
+-----
+
+    o Genome2Genome model:
+      - C4_Label_SPLIT_CODON display fixes for dna2dna
+      - Get test working with joint Phase and Intron models
+
+    o Add checks to catch duplicate C4 names.
+      (necessary as duplicates are removed on model copying)
+      (also need namespace management for C4 codegen)
+
+    o Bug with --saturatethrehold memory on large analyses
+      (maybe not taken into account by --fsmmemory ?)
+
+    o Increase default SAR ranges to span wordlength
+      (check titin example (intron:146) - bug ?).
+
+    o Bug with memory allocation on genome exhaustive alignments
+    o Fix alignment drawing scheme to handle silent dna:dna mutations
+
+    o Clean up unnecessary C4 inheritance macros
+
+    o Suboptimal exhaustive alignments
+      (can still do reuse lookups in constant time,
+       for linear space alignment as we know the DP computation order)
+      (also required to prevent SARs containing paths
+       from other HSPs or higher scoring alignments)
+       - requires ajoining HSP component retraction?).
+
+OPTIMISATIONS:
+-------------
+
+    o Only copy designated shadows in codegen.
+    o Defer/join SAR/Region memory allocation and/or use memchunks.
+      (just return bound initially, as most bounds are not confirmed ?)
+    o Profiling (and memory profiling)
+
+FEATURES:
+--------
+
+    o Change --ryo transition per line format to allow
+          () : all
+          {} : non-silent only (qy_adv || tg_adv)
+          <> : match only (qy_adv && tg_adv)
+      (or add --ryog for gene output ?)
+
+-//-
+
+    o Prevent from generating > --bestn suboptimal alignments
+      for any pairwise comparison.
+      (ie. update --bestn/BSDP threshold after every new alignment)
+    o Allow multiple span states in a single span ?
+      (ie. do all dp in a single sweep)
+
+    o Add support for large bounds and joins for missing exon finding
+      and for worst cases when two close HSPs fail to join.
+      (or just detect why this occurs ...)
+
+    o Write DP optimiser
+      - skip single input/output states O->O->O => O->O
+      - remove start/end states when single transistion
+        or simple input/output transitions can be duplicated
+        (ie. make multiple start/end states)
+      - shadows for single seq-independent loop states
+            (eg. simple ins/del)
+
+DOCUMENTATON:
+------------
+
+    o Add note about interpretation of exonerate alignments
+      (split introns, translating equivalence notation etc.)
+
+    o Add note about --score and --hspthreshold for ungapped models
+     - or add a warning/error when different)
+     - or make hsp_threshold = MAX(score, hsp_threshold)
+
+    o Add new examples to the man page.
+      eg. multiple files etc.
+
+    o Add info about each type of model.
+
+---------------------------------------------------------------------
+
+--< RELEASE POINT >--
+
+--< NEXT RELEASE POINT >--
+
+    o Add macros for Span start/end reporting functions
+      (Heuristic_Span_src_report_end_func,
+       Heuristic_Span_dst_init_start_func).
+
+    o Add option to show single-char AAs in alignments.
+    o Option for no revcomp of query or target (useful for exhaustive)
+
+    o Division of calcs into [independent, qy dep, tg, dep, qy/tg dep].
+      (this will allow further optimisations)
+
+    o Add full alignment dump.  One of:
+          o each transition
+          o each non-silent transition
+          o each differently scoring label.
+     or just add match:mismatch base-pair level detail to --ryo
+     eg. vulgar: M 7 7 (%m) -> 5 5 5 -4 5 5 5
+    o Alignment dumping/regeneration facility
+
+    o Add FastaDB sequence cache ?
+
+--< SUBSEQUENT RELEASE POINT >--
+
+    o Add simple model specification (like smile strings ?)
+        - describe model structure using predefined states
+          and transition types
+        - should be able to describe all existing models
+
+    o Change default nucleic matrix to +5/-1 ?
+
+    o Optimise DP row_matrix access with shadows ?
+    o Tidy codegen
+    o Removal of unnecessary codegen (with Optimal_Type)
+    o Check function naming to ensure reuse of global model codegen
+
+    o Add --use-config <name> option (auto update implementation)
+    o Option to dump parameter set used ?
+
+    o GFF3 support ? http://song.sf.net/
+      http://sourceforge.net/mailarchive/forum.php?thread_id=2591765&forum_id=27223
+
+--
+
+    o Training of heuristic params using exhaustive alignments,
+      training of wordhood params using ungapped suboptimal alignments
+      etc
+    o Installed headers for libxnr8/libc4 (as required for C4 codegen)
+        - requires addition of opaque types
+
+    o Add special tests directory including:
+          * tests with data
+          * all tests with valgrind
+          * all tests with MALLOC_CHECK_
+
+    o Automation of model:[global,bestfit,local,overlap] system ?
+    o Test speed of simplified DP implementations:
+          - by removing initialisations (on PatternMatrix:normal)
+          - or a faster interpreted implementation ?
+
+    o Sublinear time / non-word-based HSP-generation
+    o Stats
+    o Heuristics for flips / reversals ?
+    o Heuristics for SCFGs
+    o Blast-compatible output format (sigh)
+
+--
