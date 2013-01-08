@@ -652,7 +652,7 @@ static Alignment *GAM_Result_refine_alignment(GAM_Result *gam_result,
                                          gam_result->target->len);
             refined_alignment = Optimal_find_path(
                     gam_result->gam->optimal, region,
-                    gam_result->user_data, alignment->score, gam_result->subopt);
+                    gam_result->user_data, 0, gam_result->subopt);
             g_assert(refined_alignment);
             Region_destroy(region);
             break;
@@ -675,7 +675,7 @@ static Alignment *GAM_Result_refine_alignment(GAM_Result *gam_result,
                 - target_region_start);
             refined_alignment = Optimal_find_path(
                     gam_result->gam->optimal, region,
-                    gam_result->user_data, alignment->score, gam_result->subopt);
+                    gam_result->user_data, 0, gam_result->subopt);
             g_assert(refined_alignment);
             Region_destroy(region);
             break;
@@ -685,7 +685,6 @@ static Alignment *GAM_Result_refine_alignment(GAM_Result *gam_result,
             break;
         }
     g_assert(refined_alignment);
-    g_assert(refined_alignment->score >= alignment->score);
     if(gam_result->gam->verbosity > 1)
         g_message("Refined alignment score [%d]", refined_alignment->score);
     return refined_alignment;
@@ -699,14 +698,13 @@ static void GAM_Result_add_alignment(GAM_Result *gam_result,
         gam_result->alignment_list = g_ptr_array_new();
     if(gam_result->gam->gas->refinement != GAM_Refinement_NONE){
         refined_alignment = GAM_Result_refine_alignment(gam_result, alignment);
-        Alignment_destroy(alignment);
-        alignment = refined_alignment;
-        /* Refinement may put alignment below threshold */
-        if(alignment->score < threshold){
+        /* Use refined alignment only if it has a higher score */
+        if (refined_alignment->score >= alignment->score) {
             Alignment_destroy(alignment);
-            return;
-            }
-        }
+            alignment = refined_alignment;
+        } else
+            Alignment_destroy(refined_alignment);
+    }
     g_ptr_array_add(gam_result->alignment_list, alignment);
     SubOpt_add_alignment(gam_result->subopt, alignment);
     return;
