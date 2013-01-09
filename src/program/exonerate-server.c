@@ -86,6 +86,7 @@ static void Exonerate_Server_destroy(Exonerate_Server *exonerate_server){
 
 typedef struct {
            Alphabet *query_alphabet;
+           Alphabet_Type query_type;
     Sequence_Strand  query_strand;
            gboolean  query_is_masked;
            gboolean  revcomp_query;
@@ -116,6 +117,7 @@ static Exonerate_Server_Connection *Exonerate_Server_Connection_create(void){
     connection->query = NULL;
     connection->hsp_param = NULL;
     connection->query_alphabet = NULL;
+    connection->query_type = Alphabet_Type_UNKNOWN;
     connection->query_strand = Sequence_Strand_UNKNOWN;
     connection->query_is_masked = FALSE;
     connection->revcomp_query = FALSE;
@@ -228,6 +230,7 @@ static gchar *Exonerate_Server_help(void){
         "\n"
         "\n"
         "    valid parameters:\n"
+        "        querytype\n"
         "        seedrepeat\n"
         "\n"
         "        dnahspthreshold\n"
@@ -376,7 +379,11 @@ static Sequence *Exonerate_Server_get_query(Index *index,
     register Match_Type match_type;
     register Match *match;
     if(!connection->query_alphabet){
-        alphabet_type = Alphabet_Type_guess(query);
+        if (connection->query_type != Alphabet_Type_UNKNOWN)
+            alphabet_type = connection->query_type; /* client-specified type */
+        else
+            alphabet_type = Alphabet_Type_guess(query);
+
         if(alphabet_type == Alphabet_Type_DNA){
             connection->query_strand = Sequence_Strand_FORWARD;
         } else {
@@ -428,6 +435,18 @@ static Sequence *Exonerate_Server_get_query(Index *index,
                                connection->query_alphabet);
     }
 
+static gchar *Exonerate_Server_set_param_querytype(
+              Exonerate_Server_Connection *connection, GPtrArray *word_list){
+    const char *querytype = word_list->pdata[3];
+    if (!strcmp(querytype, "dna"))
+        connection->query_type = Alphabet_Type_DNA;
+    else if (!strcmp(querytype, "protein"))
+        connection->query_type = Alphabet_Type_PROTEIN;
+    else
+        return g_strdup_printf(
+               "error: querytype must be \"dna\" or \"protein\"\n");
+    return g_strdup_printf("ok: set\n");
+    }
 static gchar *Exonerate_Server_set_param_seedrepeat(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
     register gint seed_repeat = atoi(word_list->pdata[3]);
@@ -592,7 +611,9 @@ static gchar *Exonerate_Server_set_param(Exonerate_Server_Connection *connection
                                          GPtrArray *word_list){
     register gchar *reply = NULL;
     register gchar *name = word_list->pdata[2];
-    if(!strcmp(name, "seedrepeat")){
+    if (!strcmp(name, "querytype")){
+        reply = Exonerate_Server_set_param_querytype(connection, word_list);
+    } else if(!strcmp(name, "seedrepeat")){
         reply = Exonerate_Server_set_param_seedrepeat(connection, word_list);
     } else if(!strcmp(name, "dnahspthreshold")){
         reply = Exonerate_Server_set_param_dnahspthreshold(connection, word_list);
