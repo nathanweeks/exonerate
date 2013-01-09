@@ -87,23 +87,23 @@ static void Codegen_directory_create(gchar *path){
 static gchar *Codegen_get_code_dir(gchar *directory){
     register gchar *platform_directory, *clean_hosttype
         = Codegen_clean_path_component(HOSTTYPE);
-    register gchar *default_directory = NULL;
+    char code_dir[_XOPEN_PATH_MAX];
     if(!directory){
-        default_directory = (gchar*)g_getenv("C4_CODEGEN_DIRECTORY");
-        if(!default_directory)
-            default_directory = g_strconcat(SOURCE_ROOT_DIR,
-                                            G_DIR_SEPARATOR_S,
-                                            "codegen", NULL);
-        directory = default_directory;
+        if (getenv("C4_CODEGEN_DIRECTORY"))
+            strncpy(code_dir, getenv("C4_CODEGEN_DIRECTORY"),
+                    sizeof(code_dir)-1);
+        else
+            snprintf(code_dir, sizeof(code_dir), "%s/codegen",
+                     SOURCE_ROOT_DIR);
         }
-    if(!Codegen_directory_exists(directory))
-        Codegen_directory_create(directory);
-    platform_directory = g_strconcat(directory, G_DIR_SEPARATOR_S,
+    else
+        strncpy(code_dir, directory, sizeof(code_dir)-1);
+    if(!Codegen_directory_exists(code_dir))
+        Codegen_directory_create(code_dir);
+    platform_directory = g_strconcat(code_dir, G_DIR_SEPARATOR_S,
                                      clean_hosttype, NULL);
     if(!Codegen_directory_exists(platform_directory))
         Codegen_directory_create(platform_directory);
-    if(directory)
-        g_free(directory);
     g_free(clean_hosttype);
     return platform_directory;
     }
