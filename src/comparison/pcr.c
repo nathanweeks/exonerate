@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include "exonerate_util.h"
 #include "pcr.h"
 #include "submat.h"
 #include "sequence.h"
@@ -249,8 +250,8 @@ static PCR_Primer *PCR_Primer_create(PCR_Experiment *pcr_experiment,
     pcr_primer->revcomp = g_string_chunk_insert(
                              pcr_experiment->pcr->string_chunk, primer);
     Sequence_revcomp_in_place(pcr_primer->revcomp, pcr_primer->length);
-    g_strup(pcr_primer->forward);
-    g_strup(pcr_primer->revcomp);
+    strup(pcr_primer->forward);
+    strup(pcr_primer->revcomp);
     pcr_primer->probe_list = g_ptr_array_new();
     WordHood_traverse(pcr_experiment->pcr->wordhood,
                       PCR_Primer_Wordhood_traverse_func,

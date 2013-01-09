@@ -19,6 +19,7 @@
 
 #include "match.h"
 #include "alignment.h"
+#include "exonerate_util.h"
 
 Alignment_ArgumentSet *Alignment_ArgumentSet_create(Argument *arg){
     register ArgumentSet *as;
@@ -657,14 +658,14 @@ static void AlignmentView_add_SPLICE_SITE(AlignmentView *av,
         qy_seq_string[1] = Sequence_get_symbol(query, query_pos+1);
         AlignmentView_set_consensus_ss_string(av, is_5_prime,
                                 qy_seq_string, qy_cons_string);
-        g_strdown(qy_seq_string);
+        strdown(qy_seq_string);
         }
     if(advance_target == 2){
         tg_seq_string[0] = Sequence_get_symbol(target, target_pos);
         tg_seq_string[1] = Sequence_get_symbol(target, target_pos+1);
         AlignmentView_set_consensus_ss_string(av, is_5_prime,
                                 tg_seq_string, tg_cons_string);
-        g_strdown(tg_seq_string);
+        strdown(tg_seq_string);
         }
     if(advance_query == 2){
         if(advance_target == 2){ /* Joint intron */
@@ -674,7 +675,7 @@ static void AlignmentView_add_SPLICE_SITE(AlignmentView *av,
                           query_pos, target_pos);
         } else { /* Query intron */
             g_assert(advance_target == 0);
-            g_strdown(qy_seq_string);
+            strdown(qy_seq_string);
             g_assert(last_match);
             if(last_match->advance_query == 3)
                 AlignmentView_add(av, qy_seq_string, qy_cons_string, gap_string,
@@ -687,7 +688,7 @@ static void AlignmentView_add_SPLICE_SITE(AlignmentView *av,
     } else { /* Target intron */
         g_assert(advance_query == 0);
         g_assert(advance_target == 2);
-        g_strdown(tg_seq_string);
+        strdown(tg_seq_string);
         g_assert(last_match);
         if(last_match->advance_target == 3)
             AlignmentView_add(av, gap_string, gap_string,
@@ -984,8 +985,8 @@ static void AlignmentView_add_SPLIT_CODON(AlignmentView *av,
     target_string = g_strdup_printf("{%.*s}",
                      num_to_print,
                      (target_is_dna?tg_codon:tg_aa_name)+pos_to_start);
-    g_strup(qy_codon);
-    g_strup(tg_codon);
+    strup(qy_codon);
+    strup(tg_codon);
     if(query_is_dna){
         g_assert(!qy_aa_symbol);
         qy_aa_symbol = Translate_codon(translate, qy_codon);

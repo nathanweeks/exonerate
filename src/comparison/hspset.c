@@ -17,6 +17,7 @@
 #include <ctype.h>  /* For tolower() */
 #include <stdlib.h> /* For qsort()   */
 
+#include "exonerate_util.h"
 #include "hspset.h"
 
 HSPset_ArgumentSet *HSPset_ArgumentSet_create(Argument *arg){
@@ -634,11 +635,11 @@ static void HSP_Display_insert(HSP_Display *hd, gint position){
         }
     /* Make lower case for padding */
     if(is_padding){
-        g_strdown(query_str);
-        g_strdown(target_str);
+        strdown(query_str);
+        strdown(target_str);
     } else {
-        g_strup(query_str);
-        g_strup(target_str);
+        strup(query_str);
+        strup(target_str);
         }
     HSP_Display_add(hd, query_str, equiv_str, target_str);
     return;

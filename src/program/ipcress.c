@@ -19,6 +19,7 @@
 #include <string.h> /* For strlen() */
 
 #include "argument.h"
+#include "exonerate_util.h"
 #include "pcr.h"
 #include "fastadb.h"
 #include "lineparse.h"
@@ -261,8 +262,8 @@ static PCR *Ipcress_prepare_PCR(Ipcress *ipcress){
         id = ipcress->input_lp->word->pdata[0];
         primer_a = ipcress->input_lp->word->pdata[1];
         primer_b = ipcress->input_lp->word->pdata[2];
-        g_strup(primer_a);
-        g_strup(primer_b);
+        strup(primer_a);
+        strup(primer_b);
         min_product_len = atoi(ipcress->input_lp->word->pdata[3]);
         max_product_len = atoi(ipcress->input_lp->word->pdata[4]);
         memory_usage = PCR_add_experiment(pcr, id, primer_a, primer_b,
