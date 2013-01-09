@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include <libgen.h> /* For basename() */
 #include <sys/types.h> /* For fstat() */
 #include <sys/stat.h>  /* For fstat() */
 #include <unistd.h>    /* For fstat() */
@@ -89,7 +90,7 @@ int Argument_main(Argument *arg){
         g_error("Must request at least 1 chunk");
     fdb = FastaDB_open(query_path, NULL);
     output_stem = g_strdup_printf("%s%c%s",
-            output_dir, G_DIR_SEPARATOR, g_basename(query_path));
+            output_dir, G_DIR_SEPARATOR, basename(query_path));
     fasta_split(fdb, output_stem, num_chunks);
     FastaDB_close(fdb);
     return 0;
