@@ -363,25 +363,6 @@ static void GAM_QueryResult_report(GAM_QueryResult *gqr, GAM *gam){
 
 #define Combined_Alphabet_Type(qt,tt) ((qt) << 8 | (tt))
 
-static FILE *GAM_get_tmp_file_handler(void){
-    register gchar *path;
-    register FILE *fp;
-    gchar hostname[1024];
-    gethostname(hostname, 1024);
-    path = g_strdup_printf("%s%cxnr8_%s_%d_%d.txt",
-                          g_get_tmp_dir(),
-                          G_DIR_SEPARATOR,
-                          hostname,
-                          (gint)getppid(),
-                          (gint)getpid());
-    fp = fopen(path, "w+");
-    if(!fp)
-        g_error("Could not write to tmp bestn file [%s]", path);
-    unlink(path); /* tmp file deleted now, as will not be re-opened */
-    g_free(path);
-    return fp;
-    }
-
 static GPtrArray *GAM_build_match_list(C4_Model *model){
     register GPtrArray *match_list = g_ptr_array_new();
     Match *match_array[Match_Type_TOTAL] = {0};
@@ -424,7 +405,7 @@ GAM *GAM_create(Alphabet_Type query_type, Alphabet_Type target_type,
     gam->target_type = target_type;
     if(gam->gas->best_n){
         gam->bestn_tree = g_tree_new(GAM_compare_id);
-        gam->bestn_tmp_file = GAM_get_tmp_file_handler();
+        gam->bestn_tmp_file = tmpfile();
         gam->pqueue_set = PQueueSet_create();
         }
     if(gam->gas->percent_threshold)
