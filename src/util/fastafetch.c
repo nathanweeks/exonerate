@@ -51,8 +51,10 @@ static CompoundFile_Pos fasta_index_lookup(FastaDB *fdb, FILE *index_fp,
     left = 0;
     fseek(index_fp, 0, SEEK_END);
     right = ftell(index_fp);
-    if(right == -1)
-        g_error("Could not seek to index end [%s]", strerror(errno));
+    if(right == -1) {
+        fprintf(stderr, "Could not seek to index end [%s]", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
     while(left < right){ /* Binary search */
         pos = (left+right)>>1;
         fseek(index_fp, pos, SEEK_SET); /* Move between l&r */
@@ -93,7 +95,8 @@ static FastaDB_Seq *fasta_index_fetch(FastaDB *fdb, FILE *index_fp,
     if(pos == -1){
         if(be_silent)
             return NULL;
-        g_error("Could not find identifier [%s] (missing -F ?)", id);
+        fprintf(stderr, "Could not find identifier [%s] (missing -F ?)", id);
+        exit(EXIT_FAILURE);
         }
     fdbs = FastaDB_fetch(fdb, mask, pos);
     g_assert(!strcmp(fdbs->seq->id, id));
@@ -148,8 +151,10 @@ static void fetch_sequences(gchar *fasta_path, gchar *index_path,
     register FastaDB_Mask mask = FastaDB_Mask_ID
                                | FastaDB_Mask_DEF
                                | FastaDB_Mask_SEQ;
-    if(!index_fp)
-        g_error("Could not open fasta index [%s]", index_path);
+    if(!index_fp) {
+        fprintf(stderr,"Could not open fasta index [%s]", index_path);
+        exit(EXIT_FAILURE);
+    }
     for(i = 0; i < query_list->len; i++){
         fdbs = fasta_index_fetch(fdb, index_fp, mask,
                                  query_list->pdata[i], be_silent);

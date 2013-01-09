@@ -13,8 +13,9 @@
 *                                                                *
 \****************************************************************/
 
+#include <stdlib.h> /* For exit() */
 #include <string.h> /* For strcmp () */
-#include <strings.h> /* For strcasecmp () */
+#include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For isspace() */
 
 #include "argument.h"
@@ -75,9 +76,11 @@ int Argument_main(Argument *arg){
         remove_fp = stdin;
     } else {
         remove_fp = fopen(remove_path, "r");
-        if(!remove_fp)
-            g_error("Could not open list for removal [%s]",
+        if(!remove_fp) {
+            fprintf(stderr, "Could not open list for removal [%s]",
                      remove_path);
+            exit(EXIT_FAILURE);
+        }
         }
     id_tree_prepare(remove_fp, id_tree, id_alloc);
     fclose(remove_fp);
