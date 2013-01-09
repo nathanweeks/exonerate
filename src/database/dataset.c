@@ -301,6 +301,8 @@ gsize Dataset_memory_usage(Dataset *dataset){
          + dataset_sequence_memory;
     }
 
+// allow compilation with "-Werror"
+#pragma GCC diagnostic warning "-Wformat"
 void Dataset_info(Dataset *dataset){
     g_print("Sequence Dataset:\n"
             "----------------\n"

@@ -77,6 +77,8 @@ void VFSM_destroy(VFSM *vfsm){
     return;
     }
 
+// allow compilation with "-Werror"
+#pragma GCC diagnostic warning "-Wformat"
 void VFSM_info(VFSM *vfsm){
     register gint i;
     G_GNUC_EXTENSION /* Allow %llu without pedantic warning */

@@ -660,6 +660,8 @@ static gchar *Exonerate_Server_set_param(Exonerate_Server_Connection *connection
     return reply;
     }
 
+// allow compilation with "-Werror"
+#pragma GCC diagnostic warning "-Wformat"
 static gboolean Exonerate_Server_process(gchar *msg, gchar **reply,
                                          gpointer connection_data,
                                          gpointer user_data){

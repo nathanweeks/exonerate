@@ -361,6 +361,8 @@ static gint Index_get_expect(Index *index, Index_Strand *index_strand){
     return (expect * observed_words) + index->header->saturate_threshold;
     }
 
+// allow compilation with "-Werror"
+#pragma GCC diagnostic warning "-Wformat"
 static void Index_desaturate(Index *index, Index_Strand *index_strand){
     register VFSM_Int i;
     register gint64 removed_words = 0, removed_instances = 0;

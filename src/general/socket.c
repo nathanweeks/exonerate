@@ -15,7 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>    /* For bcopy() */
+#include <string.h>    /* For strlen() */
 #include <unistd.h>    /* For close() */
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -74,7 +74,7 @@ SocketClient *SocketClient_create(gchar *host, gint port){
 #endif /* 0 */
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
-    bcopy(hp->h_addr, &server.sin_addr, hp->h_length);
+    memmove(&server.sin_addr, hp->h_addr, hp->h_length);
     if(connect(client->connection->sock, (struct sockaddr*)&server,
                sizeof(server)) < 0){
         perror("connecting client socket");
@@ -338,8 +338,8 @@ gboolean SocketServer_listen(SocketServer *server){
 #endif /* USE_PTHREADS */
     /**/
     listen(server->connection->sock, 5);
-    while (msgsock = accept(server->connection->sock,
-                     (struct sockaddr*)&client_addr, &client_len) == -1) {
+    while ((msgsock = accept(server->connection->sock,
+                     (struct sockaddr*)&client_addr, &client_len)) == -1) {
         if(errno == EINTR)
             continue;
         perror("server accept");

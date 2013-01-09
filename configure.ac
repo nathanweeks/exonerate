@@ -12,6 +12,7 @@ AC_PROG_MAKE_SET
 # AM_PROG_LIBTOOL
 
 # OTHER STUFF
+AC_DEFINE([_XOPEN_SOURCE],[600])
 AC_C_CONST
 AC_C_INLINE
 AC_HEADER_STDC # CHECKS FOR stdlib.h stdarg.h string.h and float.h
@@ -174,8 +175,7 @@ if test "$enable_paranoia" = yes; then
     if test "$GCC" = "yes"; then
         CFLAGS="$CFLAGS -Wall -Werror \
                 -Wstrict-prototypes -Wmissing-prototypes\
-                -Wmissing-declarations\
-                -D_POSIX_SOURCE -D_GNU_SOURCE"
+                -Wmissing-declarations"
     fi
 elif test "$enable_paranoia" = no; then
     echo "Turning paranoid options off"
