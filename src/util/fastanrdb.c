@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <string.h> /* For strcmp() */
+#include <strings.h> /* For strcasecmp() */
 #include <ctype.h> /* For toupper() */
 
 #include "argument.h"
