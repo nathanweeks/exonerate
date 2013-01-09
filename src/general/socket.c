@@ -27,6 +27,7 @@
 #include <fcntl.h>
 #include <signal.h>   /* For sigaction() */
 #include <sys/wait.h> /* For wait()   */
+#include <errno.h>
 
 #include "socket.h"
 
@@ -200,12 +201,8 @@ void SocketClient_destroy(SocketClient *client){
 static gint global_connection_count = 0;
 
 static void SocketServer_reap_dead_children(int signum){
-    signal(SIGCHLD, SIG_IGN);
     while(waitpid(-1, NULL, WNOHANG) > 0)
-        g_message("Cleaned up dead child process [%d]",
-                  global_connection_count);
-    signal(SIGCHLD, SocketServer_reap_dead_children);
-    global_connection_count--;
+        global_connection_count--;
     return;
     }
 
@@ -215,11 +212,14 @@ static void SocketServer_shutdown(int signum){
     return;
     }
 
+#ifdef USE_PTHREADS
 static void SocketServer_broken_pipe(int signum){
-    g_message("Server detected broken pipe - closing thread");
+    const char error_message[] = "Server detected broken pipe - closing thread\n";
+    write(STDERR_FILENO, error_message, sizeof(error_message));
     pthread_exit(NULL);
     return;
     }
+#endif
 
 SocketServer *SocketServer_create(gint port, gint max_connections,
               SocketProcessFunc server_process_func,
@@ -228,6 +228,7 @@ SocketServer *SocketServer_create(gint port, gint max_connections,
               gpointer user_data){
     register SocketServer *server = g_new(SocketServer, 1);
     struct sockaddr_in sock_server;
+    struct sigaction sa;
     socklen_t len = sizeof(sock_server);
     server->connection = SocketConnection_create("localhost", port);
     g_assert(server_process_func);
@@ -250,8 +251,19 @@ SocketServer *SocketServer_create(gint port, gint max_connections,
         exit(1);
         }
     server->connection->port = ntohs(sock_server.sin_port);
-    signal(SIGCHLD, SocketServer_reap_dead_children);
-    signal(SIGTERM, SocketServer_shutdown);
+    sa.sa_handler = SocketServer_reap_dead_children;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(1);
+    }
+    sa.sa_handler = SocketServer_shutdown;
+    sa.sa_flags = 0;
+    if (sigaction(SIGTERM, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(1);
+    }
 #ifdef USE_PTHREADS
     server->sspd = g_new0(SocketServer_pthread_Data, max_connections);
     pthread_mutex_init(&server->connection_mutex, NULL);
@@ -326,9 +338,10 @@ gboolean SocketServer_listen(SocketServer *server){
 #endif /* USE_PTHREADS */
     /**/
     listen(server->connection->sock, 5);
-    msgsock = accept(server->connection->sock,
-                     (struct sockaddr*)&client_addr, &client_len);
-    if(msgsock == -1){
+    while (msgsock = accept(server->connection->sock,
+                     (struct sockaddr*)&client_addr, &client_len) == -1) {
+        if(errno == EINTR)
+            continue;
         perror("server accept");
         close(msgsock);
         exit(1);
