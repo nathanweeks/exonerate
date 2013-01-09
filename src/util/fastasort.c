@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <string.h> /* For strcmp() */
+#include <string.h> /* For strcasemp() */
 #include <ctype.h> /* For toupper() */
 
 #include "argument.h"
@@ -127,11 +128,11 @@ static Sort_KeyMask SortKey_Mask_create(gchar *sort_key,
         mask |= Sort_KeyMask_REVERSE;
     else
         mask |= Sort_KeyMask_FORWARD;
-    if(!g_strcasecmp(sort_key, "id"))
+    if(!strcasecmp(sort_key, "id"))
         mask |= Sort_KeyMask_ID;
-    else if(!g_strcasecmp(sort_key, "len"))
+    else if(!strcasecmp(sort_key, "len"))
         mask |= Sort_KeyMask_LEN;
-    else if(!g_strcasecmp(sort_key, "seq"))
+    else if(!strcasecmp(sort_key, "seq"))
         mask |= Sort_KeyMask_SEQ;
     else
         g_error("Unknown sort key [%s]", sort_key);

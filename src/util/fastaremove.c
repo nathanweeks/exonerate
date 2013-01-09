@@ -14,6 +14,7 @@
 \****************************************************************/
 
 #include <string.h> /* For strcmp () */
+#include <strings.h> /* For strcasecmp () */
 #include <ctype.h>  /* For isspace() */
 
 #include "argument.h"
@@ -70,7 +71,7 @@ int Argument_main(Argument *arg){
     Argument_process(arg, "fastaremove",
         "Remove sequences from a fasta file\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
-    if(!g_strcasecmp(remove_path, "stdin")){
+    if(!strcasecmp(remove_path, "stdin")){
         remove_fp = stdin;
     } else {
         remove_fp = fopen(remove_path, "r");

@@ -17,6 +17,7 @@
 #include <stdio.h>  /* For fprintf() */
 #include <stdlib.h> /* For exit() */
 #include <string.h> /* For strlen() */
+#include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For isalnum() */
 #include <unistd.h> /* For gethostname() */
 
@@ -135,9 +136,9 @@ static gboolean ArgumentParse_boolean(gchar *arg_string){
     gchar *true_string[6]  = {"Y", "T", "TRUE",  "YES", "ON", "1"},
           *false_string[6] = {"N", "F", "FALSE", "NO",  "OFF", "0"};
     for(i = 0; i < 6; i++){
-        if(!g_strcasecmp(arg_string, true_string[i]))
+        if(!strcasecmp(arg_string, true_string[i]))
             return TRUE;
-        if(!g_strcasecmp(arg_string, false_string[i]))
+        if(!strcasecmp(arg_string, false_string[i]))
             return FALSE;
         }
     g_error("Cannot parse boolean \"%s\"", arg_string);

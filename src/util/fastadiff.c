@@ -14,6 +14,7 @@
 \****************************************************************/
 
 #include <string.h> /* For strcmp() */
+#include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For toupper() */
 
 #include "argument.h"
@@ -67,7 +68,7 @@ static gint fasta_diff(gchar *first_path, gchar *second_path,
         if(allow_ambiguity){
             comp = fasta_diff_ambig_strcasecmp;
         } else {
-            comp = g_strcasecmp;
+            comp = strcasecmp;
             }
     } else {
         if(allow_ambiguity){

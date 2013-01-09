@@ -14,6 +14,7 @@
 \****************************************************************/
 
 #include <string.h> /* For strlen() */
+#include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For toupper() */
 
 #include "alphabet.h"
@@ -314,13 +315,13 @@ Alphabet_Type Alphabet_name_get_type(gchar *name){
           *protein_string[4] = {"p", "protein", "aa", "aminoacid"},
           *unknown_string[3] = {"?", "unknown", "-"};
     for(i = 0; i < 5; i++)
-        if(!g_strcasecmp(name, dna_string[i]))
+        if(!strcasecmp(name, dna_string[i]))
             return Alphabet_Type_DNA;
     for(i = 0; i < 4; i++)
-        if(!g_strcasecmp(name, protein_string[i]))
+        if(!strcasecmp(name, protein_string[i]))
             return Alphabet_Type_PROTEIN;
     for(i = 0; i < 3; i++)
-        if(!g_strcasecmp(name, unknown_string[i]))
+        if(!strcasecmp(name, unknown_string[i]))
             return Alphabet_Type_UNKNOWN;
     g_error("Unknown sequence type [%s]", name);
     return Alphabet_Type_UNKNOWN; /* not reached */

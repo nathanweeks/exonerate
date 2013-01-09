@@ -18,6 +18,7 @@
 #include <math.h>   /* For log() */
 #include <ctype.h>  /* For toupper() */
 #include <string.h> /* For strlen() */
+#include <strings.h> /* For strcasecmp() */
 
 #include "splice.h"
 #include "matrix.h"
@@ -143,7 +144,7 @@ static void SplicePredictor_parse_data(SplicePredictor *sp, gchar *path){
                 break;
             case 1:
                 word = lp->word->pdata[0];
-                if(!g_strcasecmp(word, "splice"))
+                if(!strcasecmp(word, "splice"))
                     sp->model_splice_after = sp->model_length;
                 else
                     g_error("bad line in splice data file");
@@ -192,7 +193,7 @@ static void SplicePredictor_info(SplicePredictor *sp){
 #endif /* 0 */
 
 static void SplicePredictor_add_5SS_data(SplicePredictor *sp, gchar *path){
-    if((!path) || (!strlen(path)) || (!g_strcasecmp(path, "primate")))
+    if((!path) || (!strlen(path)) || (!strcasecmp(path, "primate")))
         SplicePredictor_add_data_primate_5SS(sp);
     else
         SplicePredictor_parse_data(sp, path);
@@ -200,7 +201,7 @@ static void SplicePredictor_add_5SS_data(SplicePredictor *sp, gchar *path){
     }
 
 static void SplicePredictor_add_3SS_data(SplicePredictor *sp, gchar *path){
-    if((!path) || (!strlen(path)) || (!g_strcasecmp(path, "primate")))
+    if((!path) || (!strlen(path)) || (!strcasecmp(path, "primate")))
         SplicePredictor_add_data_primate_3SS(sp);
     else
         SplicePredictor_parse_data(sp, path);

@@ -17,6 +17,7 @@
 #include "alphabet.h"
 #include <ctype.h>    /* For toupper()  */
 #include <string.h>   /* For strlen()   */
+#include <strings.h>   /* For strcasecmp()   */
 #include <math.h>     /* For pow()      */
 #include <stddef.h>   /* For offsetof() */
 
@@ -265,14 +266,14 @@ static gsize Seeder_VFSM_memory_usage(Seeder_VFSM *seeder_vfsm){
 /**/
 
 static gboolean Seeder_decide_fsm_type(gchar *force_fsm){
-    if(!g_strcasecmp(force_fsm, "none"))
+    if(!strcasecmp(force_fsm, "none"))
         return TRUE;
     /* FIXME: improve this by checking if VFSM is a better idea
      *        by looking at the query sizes ...
      */
-    if(!g_strcasecmp(force_fsm, "normal"))
+    if(!strcasecmp(force_fsm, "normal"))
         return TRUE;
-    if(!g_strcasecmp(force_fsm, "compact"))
+    if(!strcasecmp(force_fsm, "compact"))
         return FALSE;
     g_error("Unknown fsm type [%s]", force_fsm);
     return TRUE;

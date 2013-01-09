@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <errno.h>
 
 #include "argument.h"
@@ -118,7 +119,7 @@ static GPtrArray *get_query_list(gchar *query, gboolean use_fosn){
     register GPtrArray *query_list = g_ptr_array_new();
     register FILE *fp = NULL;
     register GString *id;
-    if(!g_strcasecmp(query, "stdin")){
+    if(!strcasecmp(query, "stdin")){
         fp = stdin;
     } else {
         if(use_fosn)

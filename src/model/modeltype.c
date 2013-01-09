@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include <strings.h> /* For strcasecmp() */
 #include "modeltype.h"
 
 #include "ungapped.h"
@@ -118,10 +119,10 @@ Model_Type Model_Type_from_string(gchar *str){
           Model_Type_GENOME2GENOME};
     register gint i;
     for(i = 0; i < Model_Type_TOTAL; i++)
-        if(!g_strcasecmp(name[i], str))
+        if(!strcasecmp(name[i], str))
             return type[i];
     for(i = 0; i < Model_Type_TOTAL; i++)
-        if(!g_strcasecmp(short_name[i], str))
+        if(!strcasecmp(short_name[i], str))
             return type[i];
     g_error("Unknown model type [%s]", str);
     return Model_Type_UNGAPPED; /* Not reached */

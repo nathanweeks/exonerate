@@ -16,6 +16,7 @@
 #include <stdio.h>  /* For remove() */
 #include <stdlib.h> /* For system() */
 #include <string.h> /* For strstr() */
+#include <strings.h> /* For strcasecmp() */
 
 #include "ungapped.h"
 #include "affine.h"
@@ -418,7 +419,7 @@ int Argument_main(Argument *arg){
     Intron_ArgumentSet_create(arg);
     Codegen_ArgumentSet_create(arg);
     Argument_process(arg, "exonerate:bootstrapper", NULL, NULL);
-    if((!models) || (!g_strcasecmp(models, "all")))
+    if((!models) || (!strcasecmp(models, "all")))
         models = "u u:t a:g a:b a:l a:o e2g ner p2d p2d:b p2g p2g:b c2c c2g cd2g";
     Bootstrapper_process(bs, models);
     Bootstrapper_close(bs);

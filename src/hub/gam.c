@@ -16,6 +16,7 @@
 #include <stdio.h>  /* For fopen() */
 #include <stdlib.h> /* For qsort() */
 #include <string.h> /* For strcmp() */
+#include <strings.h> /* For strcasecmp() */
 #include <unistd.h> /* For unlink(), getpid(), getppid() etc */
 
 #include "gam.h"
@@ -65,7 +66,7 @@ static GAM_Refinement GAM_Refinement_from_string(gchar *str){
         GAM_Refinement_REGION};
     register gint i;
     for(i = 0; i < GAM_Refinement_TOTAL; i++)
-        if(!g_strcasecmp(name[i], str))
+        if(!strcasecmp(name[i], str))
             return refinement[i];
     g_error("Unknown refinement type [%s]", str);
     return GAM_Refinement_NONE; /* Not reached */
