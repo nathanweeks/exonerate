@@ -74,7 +74,7 @@ SocketClient *SocketClient_create(gchar *host, gint port){
 #endif /* 0 */
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
-    memmove(&server.sin_addr, hp->h_addr, hp->h_length);
+    memmove(&server.sin_addr, hp->h_addr_list[0], hp->h_length);
     if(connect(client->connection->sock, (struct sockaddr*)&server,
                sizeof(server)) < 0){
         perror("connecting client socket");
