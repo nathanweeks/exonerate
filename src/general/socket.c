@@ -337,7 +337,7 @@ gboolean SocketServer_listen(SocketServer *server){
     pthread_attr_setdetachstate(&pt_attr, PTHREAD_CREATE_DETACHED);
 #endif /* USE_PTHREADS */
     /**/
-    listen(server->connection->sock, 5);
+    listen(server->connection->sock, server->max_connections);
     while ((msgsock = accept(server->connection->sock,
                      (struct sockaddr*)&client_addr, &client_len)) == -1) {
         if(errno == EINTR)
