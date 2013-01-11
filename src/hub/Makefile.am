@@ -2,7 +2,7 @@
 TESTS = gam.test analysis.test bsam.test
 noinst_PROGRAMS = $(TESTS)
 
-INCLUDES = -I$(top_srcdir)/src/sequence   \
+AM_CPPFLAGS = -I$(top_srcdir)/src/sequence   \
            -I$(top_srcdir)/src/database   \
            -I$(top_srcdir)/src/comparison \
            -I$(top_srcdir)/src/struct     \

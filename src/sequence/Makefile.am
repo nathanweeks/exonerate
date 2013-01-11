@@ -3,7 +3,7 @@ TESTS = sequence.test submat.test translate.test splice.test \
         alphabet.test codonsubmat.test
 noinst_PROGRAMS = $(TESTS)
 
-INCLUDES = -I$(top_srcdir)/src/struct \
+AM_CPPFLAGS = -I$(top_srcdir)/src/struct \
            -I$(top_srcdir)/src/general
 
 noinst_HEADERS = sequence.h submat.h translate.h splice.h alphabet.h \

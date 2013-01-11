@@ -1,7 +1,7 @@
 
 bin_PROGRAMS = exonerate ipcress exonerate-server
 
-INCLUDES = -I$(top_srcdir)/src/sequence   \
+AM_CPPFLAGS = -I$(top_srcdir)/src/sequence   \
            -I$(top_srcdir)/src/database   \
            -I$(top_srcdir)/src/comparison \
            -I$(top_srcdir)/src/struct     \
@@ -75,11 +75,11 @@ c4_model_archive.a: $(BOOTSTRAPPER)
 
 # Special viterbi.o and scheduler.o for compiled model linking
 viterbi.o: $(top_srcdir)/src/c4/viterbi.c
-	$(CC) $(CFLAGS) $(INCLUDES) -I.   \
+	$(CC) $(CFLAGS) $(AM_CPPFLAGS) -I.   \
         -DUSE_COMPILED_MODELS             \
         -c $(top_srcdir)/src/c4/viterbi.c
 scheduler.o: $(top_srcdir)/src/sdp/scheduler.c
-	$(CC) $(CFLAGS) $(INCLUDES) -I.   \
+	$(CC) $(CFLAGS) $(AM_CPPFLAGS) -I.   \
         -DUSE_COMPILED_MODELS             \
         -c $(top_srcdir)/src/sdp/scheduler.c
 

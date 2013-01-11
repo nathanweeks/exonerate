@@ -6,7 +6,7 @@ noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = argument.h lineparse.h compoundfile.h socket.h \
                  jobqueue.h threadref.h
 
-INCLUDES = -DSOURCE_ROOT_DIR="\"@source_root_dir@\"" \
+AM_CPPFLAGS = -DSOURCE_ROOT_DIR="\"@source_root_dir@\"" \
            -DCUSTOM_GUINT64_FORMAT="\"@custom_guint64_format@\"" \
            -I$(top_srcdir)/src/struct
 

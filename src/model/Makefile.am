@@ -8,7 +8,7 @@ TESTS = edit_distance.test affine.test protein2dna.test    \
 
 noinst_PROGRAMS = $(TESTS) bootstrapper
 
-INCLUDES = -I$(top_srcdir)/src/c4                    \
+AM_CPPFLAGS = -I$(top_srcdir)/src/c4                    \
            -I$(top_srcdir)/src/bsdp                  \
            -I$(top_srcdir)/src/sdp                   \
            -I$(top_srcdir)/src/sequence              \

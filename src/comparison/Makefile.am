@@ -4,7 +4,7 @@ TESTS = wordhood.test hspset.test pcr.test \
 
 noinst_PROGRAMS = $(TESTS)
 
-INCLUDES = -I$(top_srcdir)/src/sequence \
+AM_CPPFLAGS = -I$(top_srcdir)/src/sequence \
            -I$(top_srcdir)/src/struct   \
            -I$(top_srcdir)/src/general
 

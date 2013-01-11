@@ -9,7 +9,7 @@ EXTRA_PROGRAMS = fastaclean fastaclip fastachecksum fastacomposition \
                fastavalidcds fasta2esd fastaannotatecdna \
                esd2esi
 
-INCLUDES = -I$(top_srcdir)/src/sequence   \
+AM_CPPFLAGS = -I$(top_srcdir)/src/sequence   \
            -I$(top_srcdir)/src/database   \
            -I$(top_srcdir)/src/struct     \
            -I$(top_srcdir)/src/comparison \

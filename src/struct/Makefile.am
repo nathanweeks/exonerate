@@ -11,7 +11,7 @@ noinst_HEADERS = fsm.h matrix.h pqueue.h slist.h rangetree.h vfsm.h \
                  splaytree.h noitree.h
 #                huffman.h fmindex.h
 
-INCLUDES = -DCUSTOM_GUINT64_FORMAT="\"@custom_guint64_format@\""
+AM_CPPFLAGS = -DCUSTOM_GUINT64_FORMAT="\"@custom_guint64_format@\""
 
 fsm_test_SOURCES = fsm.test.c fsm.c
 fsm_test_LDADD = recyclebin.o
