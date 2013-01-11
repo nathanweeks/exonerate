@@ -13,6 +13,10 @@ AC_PROG_MAKE_SET
 
 # OTHER STUFF
 AC_DEFINE([_XOPEN_SOURCE],[600])
+
+# Linux lacks _XOPEN_PATH_MAX in limits.h...
+AC_CHECK_DECLS([_XOPEN_PATH_MAX],[],[AC_DEFINE([_XOPEN_PATH_MAX],[1024])],\
+               [[#include <limits.h>]])
 AC_C_CONST
 AC_C_INLINE
 AC_HEADER_STDC # CHECKS FOR stdlib.h stdarg.h string.h and float.h
