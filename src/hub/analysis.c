@@ -19,6 +19,7 @@
 #include "hspset.h"
 #include "lineparse.h"
 
+#include <limits.h> /* For _POSIX2_LINE_MAX */
 #include <stdlib.h> /* For atoi() */
 #include <unistd.h> /* For sleep() */
 #include <string.h> /* For strcmp() */
@@ -479,97 +480,88 @@ static gchar *Analysis_Client_send(Analysis_Client *aclient, gchar *msg,
 static void Analysis_Client_set_param(Analysis_Client *aclient, GAM *gam){
     register HSPset_ArgumentSet *has = HSPset_ArgumentSet_create(NULL);
     register Analysis_ArgumentSet *aas = Analysis_ArgumentSet_create(NULL);
-    register gchar *msg, *reply;
+    char msg[_POSIX2_LINE_MAX], *reply;
     /**/
     if(aas->custom_server_command){
-        msg = g_strdup_printf("%s\n", aas->custom_server_command);
+        snprintf(msg, sizeof(msg), "%s\n", aas->custom_server_command);
         reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-        g_free(msg);
         g_free(reply);
         }
     /**/
-    msg = g_strdup_printf("set param seedrepeat %d",
-                          has->seed_repeat);
+
+    snprintf(msg, sizeof(msg), "set param querytype %s",
+                          (gam->query_type == Alphabet_Type_DNA) ?
+                          "dna" : "protein");
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
+    free(reply);
+
+    snprintf(msg, sizeof(msg), "set param seedrepeat %d", has->seed_repeat);
+    reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param dnahspthreshold %d",
+    snprintf(msg, sizeof(msg), "set param dnahspthreshold %d",
                           has->dna_hsp_threshold);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param proteinhspthreshold %d",
+    snprintf(msg, sizeof(msg), "set param proteinhspthreshold %d",
                           has->protein_hsp_threshold);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param codonhspthreshold %d",
+    snprintf(msg, sizeof(msg), "set param codonhspthreshold %d",
                           has->codon_hsp_threshold);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param dnawordlimit %d",
+    snprintf(msg, sizeof(msg), "set param dnawordlimit %d",
                           has->dna_word_limit);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param proteinwordlimit %d",
+    snprintf(msg, sizeof(msg), "set param proteinwordlimit %d",
                           has->protein_word_limit);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param codonwordlimit %d",
+    snprintf(msg, sizeof(msg), "set param codonwordlimit %d",
                           has->codon_word_limit);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param dnahspdropoff %d",
+    snprintf(msg, sizeof(msg), "set param dnahspdropoff %d",
                           has->dna_hsp_dropoff);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param proteinhspdropoff %d",
+    snprintf(msg, sizeof(msg), "set param proteinhspdropoff %d",
                           has->protein_hsp_dropoff);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param codonhspdropoff %d",
+    snprintf(msg, sizeof(msg), "set param codonhspdropoff %d",
                           has->codon_hsp_dropoff);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param geneseedthreshold %d",
+    snprintf(msg, sizeof(msg), "set param geneseedthreshold %d",
                           has->geneseed_threshold);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param geneseedrepeat %d",
+    snprintf(msg, sizeof(msg), "set param geneseedrepeat %d",
                           has->geneseed_repeat);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param maxqueryspan %d",
+    snprintf(msg, sizeof(msg), "set param maxqueryspan %d",
                           gam->max_query_span);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
-    msg = g_strdup_printf("set param maxtargetspan %d",
+    snprintf(msg, sizeof(msg), "set param maxtargetspan %d",
                           gam->max_target_span);
     reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    g_free(msg);
     g_free(reply);
     /**/
     return;
