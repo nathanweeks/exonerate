@@ -39,7 +39,9 @@ typedef struct {
        gchar *force_scan;
         gint  saturate_threshold;
        gchar *custom_server_command;
+#ifdef USE_PTHREADS
         gint  thread_count;
+#endif
 } Analysis_ArgumentSet;
 
 Analysis_ArgumentSet *Analysis_ArgumentSet_create(Argument *arg);

@@ -174,7 +174,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-use_pthreads = @use_pthreads@
 TESTS = fastaclean.test.sh fastaclip.test.sh fastacomposition.test.sh \
         fastadiff.test.sh fastaexpode.test.sh                         \
         fastaindex.fastafetch.test.sh fastalength.test.sh             \

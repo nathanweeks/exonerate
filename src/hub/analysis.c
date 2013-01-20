@@ -55,9 +55,11 @@ Analysis_ArgumentSet *Analysis_ArgumentSet_create(Argument *arg){
         ArgumentSet_add_option(as, 0, "customserver", "command",
             "Custom command to send non-standard server", "NULL",
             Argument_parse_string, &aas.custom_server_command);
+#ifdef USE_PTHREADS
         ArgumentSet_add_option(as, 'c', "cores", "number",
             "Number of cores/CPUs/threads for alignment computation", "1",
             Argument_parse_int, &aas.thread_count);
+#endif
         Argument_absorb_ArgumentSet(arg, as);
         }
     return &aas;
@@ -1182,7 +1184,12 @@ Analysis *Analysis_create(
     g_assert(target_path_list->len);
     analysis->aas = Analysis_ArgumentSet_create(NULL);
     analysis->verbosity = verbosity;
+#ifdef USE_PTHREADS
     analysis->job_queue = JobQueue_create(analysis->aas->thread_count);
+#else
+    analysis->job_queue = JobQueue_create(1);
+#endif
+
     /* Expand FOSN paths */
     expanded_query_path_list = Analysis_FOSN_expand_path_list(
                                                     query_path_list);

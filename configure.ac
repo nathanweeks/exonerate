@@ -294,26 +294,28 @@ else
 fi
 AC_SUBST(installed_util_list)
 
-# ALLOW DISABLING OF PTHREADS
-AC_ARG_ENABLE(pthreads,
-[
-  --enable-pthreads Use pthreads for exonerate-server
-  --disable-pthreads Do not use pthreads for exonerate-server],
-[enable_pthreads="$enableval"],[enable_pthreads=yes])
-if test "$enable_pthreads" = yes; then
-    echo "Using PTHREADS"
-    CFLAGS="$CFLAGS -DUSE_PTHREADS"
-    # for g_thread_init()
-    g_thread_init_ldflags=`pkg-config --libs gthread-2.0`
-    LDFLAGS="$LDFLAGS $g_thread_init_ldflags -lpthread"
-elif test "$enable_pthreads" = no; then
-    echo "Not using pthreads"
-else
-    echo "error: must be yes or no:"
-    echo "    --enable-pthreads:[$enable_pthreads]"
-    exit 1
-fi
-AC_SUBST(use_pthreads)
+# 2012-01-20 (nathanweeks): Disable pthreads code due to reliability issues &
+# limited utility.
+## ALLOW DISABLING OF PTHREADS
+#AC_ARG_ENABLE(pthreads,
+#[
+#  --enable-pthreads Use pthreads for exonerate-server
+#  --disable-pthreads Do not use pthreads for exonerate-server],
+#[enable_pthreads="$enableval"],[enable_pthreads=yes])
+#if test "$enable_pthreads" = yes; then
+#    echo "Using PTHREADS"
+#    CFLAGS="$CFLAGS -DUSE_PTHREADS"
+#    # for g_thread_init()
+#    g_thread_init_ldflags=`pkg-config --libs gthread-2.0`
+#    LDFLAGS="$LDFLAGS $g_thread_init_ldflags -lpthread"
+#elif test "$enable_pthreads" = no; then
+#    echo "Not using pthreads"
+#else
+#    echo "error: must be yes or no:"
+#    echo "    --enable-pthreads:[$enable_pthreads]"
+#    exit 1
+#fi
+#AC_SUBST(use_pthreads)
 
 echo "----------------------------------------------------------------"
 

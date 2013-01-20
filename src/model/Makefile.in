@@ -332,7 +332,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-use_pthreads = @use_pthreads@
 AM_CPPFLAGS = -I$(top_srcdir)/src/c4                    \
            -I$(top_srcdir)/src/bsdp                  \
            -I$(top_srcdir)/src/sdp                   \

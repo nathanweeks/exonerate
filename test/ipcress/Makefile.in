@@ -174,7 +174,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-use_pthreads = @use_pthreads@
 TESTS = ipcress.simple.test.sh
 EXTRA_DIST = $(TESTS)
 
