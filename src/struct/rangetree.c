@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include <search.h> /* For tdelete(), tfind(), tsearch(), twalk() */
 #include <stdlib.h> /* For lrand48() */
 
 #include "rangetree.h"
@@ -29,7 +30,7 @@ static gint RangeTree_recent_data_compare(gconstpointer a,
 RangeTree *RangeTree_create(void){
     register RangeTree *rt = g_new(RangeTree, 1);
     rt->root = NULL;
-    rt->recent_data = g_tree_new(RangeTree_recent_data_compare);
+    rt->recent_data = NULL;
     rt->node_recycle = RecycleBin_create("RangeTree_Node",
                                          sizeof(RangeTree_Node), 256);
     return rt;
@@ -37,7 +38,9 @@ RangeTree *RangeTree_create(void){
 
 void RangeTree_destroy(RangeTree *rt, RangeTree_FreeFunc rtff,
                               gpointer user_data){
-    g_tree_destroy(rt->recent_data);
+    while (rt->recent_data)
+        tdelete((void *)*(RangeTree_Node **)rt->recent_data, &rt->recent_data,
+                RangeTree_recent_data_compare);
     RecycleBin_destroy(rt->node_recycle);
     g_free(rt);
     return;
@@ -51,8 +54,9 @@ void RangeTree_add(RangeTree *rt, gint x, gint y, gpointer info){
     rtn->info = info;
     rtn->left = NULL;
     rtn->right = NULL;
-    g_assert(!g_tree_lookup(rt->recent_data, rtn));
-    g_tree_insert(rt->recent_data, rtn, rtn);
+    g_assert(!tfind((void *)rtn, &rt->recent_data,
+           RangeTree_recent_data_compare));
+    tsearch((void *)rtn, &rt->recent_data, RangeTree_recent_data_compare);
     return;
     }
 
@@ -115,47 +119,14 @@ static void RangeTree_insert(RangeTree *rt, RangeTree_Node *rtn){
     return;
     }
 
-static void RangeTree_insert_list(RangeTree *rt, GPtrArray *list){
-    register gint i, j;
-    register RangeTree_Node *rtn, *swap_rtn;
-    srand(list->len);
-    for(i = 0; i < list->len; i++){ /* Shuffle list */
-        rtn = list->pdata[i];
-        j = ((gint)lrand48()) % list->len;
-        swap_rtn = list->pdata[j];
-        list->pdata[j] = rtn;
-        list->pdata[i] = swap_rtn;
-        }
-    for(i = 0; i < list->len; i++){ /* Insert list */
-        rtn = list->pdata[i];
-        RangeTree_insert(rt, rtn);
-        }
-    return;
-    }
-/* The list contains RangeTree_Data objects to be inserted.
- * As the range tree is not balanced, this allows
- * a set of points to be inserted in random order
- * to avoid the worst-case performance of the RangeTree.
- */
-
-static gint RangeTree_insert_recent_collect(gpointer key,
-                                            gpointer value,
-                                            gpointer data){
-    register GPtrArray *list = data;
-    g_ptr_array_add(list, value);
-    return FALSE;
-    }
 
 static void RangeTree_insert_recent(RangeTree *rt){
-    register GPtrArray *node_list = g_ptr_array_new();
-    g_tree_traverse(rt->recent_data, RangeTree_insert_recent_collect,
-                    G_IN_ORDER, node_list);
-    if(node_list->len){
-        RangeTree_insert_list(rt, node_list);
-        g_tree_destroy(rt->recent_data);
-        rt->recent_data = g_tree_new(RangeTree_recent_data_compare);
-        }
-    g_ptr_array_free(node_list, TRUE);
+    /* Remove root node with each iteration */
+    while (rt->recent_data) {
+        RangeTree_insert(rt, *((RangeTree_Node **)(rt->recent_data)));
+        tdelete(*(RangeTree_Node **)rt->recent_data, &rt->recent_data, 
+                RangeTree_recent_data_compare);
+    }
     return;
     }
 
@@ -194,7 +165,7 @@ gboolean RangeTree_check_pos(RangeTree *rt,
     RangeTree_Node rtn;
     rtn.x = x;
     rtn.y = y;
-    if(g_tree_lookup(rt->recent_data, &rtn))
+    if(tfind((void *)&rtn, &rt->recent_data, RangeTree_recent_data_compare))
         return TRUE;
     return RangeTree_find_internal(rt, x, 1, y, 1,
                                    RangeTree_find_point, NULL);

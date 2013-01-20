@@ -33,7 +33,7 @@ typedef struct RangeTree_Node {
 
 typedef struct {
     RangeTree_Node *root;
-             GTree *recent_data;
+              void *recent_data; /* binary search tree */
         RecycleBin *node_recycle;
 } RangeTree;
 
