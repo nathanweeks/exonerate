@@ -101,13 +101,12 @@ typedef struct {
                 Submat *protein_submat;
              Translate *translate;
        GAM_ArgumentSet *gas;
-                 GTree *bestn_tree; /* Contains GAM_QueryResult */
+                  void *bestn_tree; /* Contains GAM_QueryResult */
                   FILE *bestn_tmp_file;
                   gint  verbosity;
               gboolean  translate_both;
               gboolean  dual_match;
-                 GTree *percent_threshold_tree;
-                        /* Contains GAM_QueryInfo */
+                  void *percent_threshold_tree; /* Contains GAM_QueryInfo */
              PQueueSet *pqueue_set;
                   gint  max_query_span;
                   gint  max_target_span;

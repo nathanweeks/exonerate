@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include <search.h> /* For tdelete(), tfind(), tsearch(), twalk() */
 #include <stdio.h>  /* For fopen() */
 #include <stdlib.h> /* For qsort() */
 #include <string.h> /* For strcmp() */
@@ -23,6 +24,8 @@
 #include "ungapped.h"
 #include "opair.h"
 #include "rangetree.h"
+
+static GAM *_gam; /* file-scope variable for passing to twalk() */
 
 static gchar *GAM_Argument_parse_Model_Type(gchar *arg_string,
                                             gpointer data){
@@ -217,9 +220,9 @@ static void GAM_StoredResult_display(GAM_StoredResult *gsr,
 
 /**/
 
-static gint GAM_compare_id(gconstpointer a, gconstpointer b){
-    register const gchar *id_a = a, *id_b = b;
-    return strcmp(id_a, id_b);
+static int GAM_compare_id(const void *gqr1, const void *gqr2){
+    return strcmp(((const GAM_QueryResult*)gqr1)->query_id, 
+                  ((const GAM_QueryResult*)gqr2)->query_id);
     }
 
 static GAM_QueryResult *GAM_QueryResult_create(GAM *gam,
@@ -404,12 +407,9 @@ GAM *GAM_create(Alphabet_Type query_type, Alphabet_Type target_type,
     gam->query_type = query_type;
     gam->target_type = target_type;
     if(gam->gas->best_n){
-        gam->bestn_tree = g_tree_new(GAM_compare_id);
         gam->bestn_tmp_file = tmpfile();
         gam->pqueue_set = PQueueSet_create();
         }
-    if(gam->gas->percent_threshold)
-        gam->percent_threshold_tree = g_tree_new(GAM_compare_id);
     gam->translate_both = Model_Type_translate_both(gam->gas->type);
     gam->dual_match = Model_Type_has_dual_match(gam->gas->type);
     gam->model = Model_Type_get_model(gam->gas->type,
@@ -494,37 +494,20 @@ static void GAM_QueryInfo_destroy(GAM_QueryInfo *gqi){
 
 /**/
 
-static gint GAM_tree_collect_values(gpointer key,
-                                    gpointer value,
-                                    gpointer data){
-    register GPtrArray *list = data;
-    g_ptr_array_add(list, value);
-    return FALSE;
+static void GAM_bestn_tree_destroy(void *bestn_tree){
+    while (bestn_tree) {
+        GAM_QueryResult *gqr = *(GAM_QueryResult **)bestn_tree;
+        tdelete((void *)gqr, &bestn_tree, GAM_compare_id);
+        GAM_QueryResult_destroy(gqr);
+        }
     }
 
-static void GAM_bestn_tree_destroy(GTree *bestn_tree){
-    register GPtrArray *query_data_list = g_ptr_array_new();
-    register gint i;
-    g_tree_traverse(bestn_tree, GAM_tree_collect_values,
-                    G_IN_ORDER, query_data_list);
-    g_tree_destroy(bestn_tree);
-    for(i = 0; i < query_data_list->len; i++)
-        GAM_QueryResult_destroy(query_data_list->pdata[i]);
-    g_ptr_array_free(query_data_list, TRUE);
-    return;
-    }
-
-static void GAM_percent_threshold_tree_destroy(
-         GTree *percent_threshold_tree){
-    register GPtrArray *query_info_list = g_ptr_array_new();
-    register gint i;
-    g_tree_traverse(percent_threshold_tree, GAM_tree_collect_values,
-                    G_IN_ORDER, query_info_list);
-    g_tree_destroy(percent_threshold_tree);
-    for(i = 0; i < query_info_list->len; i++)
-        GAM_QueryInfo_destroy(query_info_list->pdata[i]);
-    g_ptr_array_free(query_info_list, TRUE);
-    return;
+static void GAM_percent_threshold_tree_destroy(void *percent_threshold_tree){
+    while (percent_threshold_tree) {
+        GAM_QueryInfo *gqi = *(GAM_QueryInfo **)percent_threshold_tree;
+        tdelete((void *)gqi, &percent_threshold_tree, GAM_compare_id);
+        GAM_QueryInfo_destroy(gqi);
+        }
     }
 
 void GAM_destroy(GAM *gam){
@@ -557,19 +540,18 @@ void GAM_destroy(GAM *gam){
     return;
     }
 
-static gint GAM_bestn_tree_report_traverse(gpointer key,
-                                           gpointer value,
-                                           gpointer data){
-    register GAM_QueryResult *gqr = value;
-    register GAM *gam = data;
-    GAM_QueryResult_report(gqr, gam);
-    return FALSE;
+void GAM_bestn_tree_report_traverse(const void *gqr,
+                                    VISIT order,
+                                    int level) {
+    if (order == leaf || order == postorder)
+        GAM_QueryResult_report(*(GAM_QueryResult**)gqr, _gam);
     }
 
 void GAM_report(GAM *gam){
-    if(gam->bestn_tree)
-        g_tree_traverse(gam->bestn_tree, GAM_bestn_tree_report_traverse,
-                        G_IN_ORDER, gam);
+    if(gam->bestn_tree) {
+        _gam = gam;
+        twalk(gam->bestn_tree, GAM_bestn_tree_report_traverse);
+    }
     return;
     }
 
@@ -696,8 +678,11 @@ static C4_Score GAM_get_query_threshold(GAM *gam, Sequence *query){
     register GAM_QueryResult *gqr;
     register GAM_StoredResult *gsr;
     register GAM_QueryInfo *gqi;
+    GAM_QueryResult gq_lookup = {.query_id = query->id};
+    void *tree_node;
     if(gam->gas->best_n){
-        gqr = g_tree_lookup(gam->bestn_tree, query->id);
+        tree_node = tfind((void*)&gq_lookup, &gam->bestn_tree, GAM_compare_id);
+        gqr = tree_node ? *(GAM_QueryResult **)tree_node : NULL;
         if(gqr && (PQueue_total(gqr->pq) >= gam->gas->best_n)){
             gsr = PQueue_top(gqr->pq);
             if(gam->verbosity > 2)
@@ -707,11 +692,11 @@ static C4_Score GAM_get_query_threshold(GAM *gam, Sequence *query){
             }
         }
     if(gam->gas->percent_threshold){
-        gqi = g_tree_lookup(gam->percent_threshold_tree, query->id);
-        if(!gqi){
+        tree_node = tfind((void*)&gq_lookup, &gam->percent_threshold_tree, 
+                          GAM_compare_id);
+        if(!tree_node){
             gqi = GAM_QueryInfo_create(query, gam);
-            g_tree_insert(gam->percent_threshold_tree, gqi->query_id,
-                                                       gqi);
+            tsearch((void*)gqi, &gam->percent_threshold_tree, GAM_compare_id);
             }
         return gqi->threshold;
         }
@@ -1269,13 +1254,14 @@ void GAM_Result_submit(GAM_Result *gam_result){
     g_assert(gam_result);
     GAM_lock(gam_result->gam);
     if(gam_result->gam->gas->best_n){
-        gqr = g_tree_lookup(gam_result->gam->bestn_tree,
-                            gam_result->query->id);
-        if(!gqr){
+        GAM_QueryResult gqr_lookup = {.query_id = gam_result->query->id};
+        void *tree_node = tfind((void*)&gqr_lookup,
+                                      &gam_result->gam->bestn_tree,
+                                      GAM_compare_id);
+        if(!tree_node){
             gqr = GAM_QueryResult_create(gam_result->gam,
                                          gam_result->query->id);
-            g_tree_insert(gam_result->gam->bestn_tree,
-                          gqr->query_id, gqr);
+            tsearch((void*)gqr, &gam_result->gam->bestn_tree, GAM_compare_id);
             }
         g_assert(gqr);
         g_assert(!strcmp(gqr->query_id, gam_result->query->id));
