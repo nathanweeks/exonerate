@@ -16,6 +16,7 @@
 #include <stdio.h>  /* For fopen() */
 #include <string.h> /* For strlen() */
 #include <ctype.h>  /* For toupper() */
+#include <search.h> /* For tdelete(), tfind(), tsearch(), and twalk() */
 #include <stdlib.h> /* For atoi() */
 
 #include "sequence.h"
@@ -48,7 +49,7 @@ static gint Sequence_Annotation_compare(gconstpointer a,
     }
 
 static GTree *Sequence_create_annotation_tree(gchar *path){
-    register GTree *tree = g_tree_new(Sequence_Annotation_compare);
+    void *tree = NULL;
     register FILE *fp = fopen(path, "r");
     register LineParse *lp;
     register gchar *id, strand_char;
@@ -76,8 +77,9 @@ static GTree *Sequence_create_annotation_tree(gchar *path){
                 }
             annotation = Sequence_Annotation_create(id, strand,
                                              cds_start, cds_length);
-            g_assert(!g_tree_lookup(tree, annotation->id));
-            g_tree_insert(tree, annotation->id, annotation);
+            g_assert(!tfind((void*)annotation->id, &tree, 
+                          Sequence_Annotation_compare));
+            tsearch((void*)annotation, &tree, Sequence_Annotation_compare);
             }
         }
     LineParse_destroy(lp);
@@ -85,19 +87,12 @@ static GTree *Sequence_create_annotation_tree(gchar *path){
     return tree;
     }
 
-static gint Sequence_destroy_annotation_data(gpointer key,
-                                             gpointer value,
-                                             gpointer data){
-    register Sequence_Annotation *annotation = value;
-    Sequence_Annotation_destroy(annotation);
-    return FALSE;
-    }
-
-static void Sequence_destroy_annotation_tree(GTree *tree){
-    g_tree_traverse(tree, Sequence_destroy_annotation_data,
-                    G_IN_ORDER, NULL);
-    g_tree_destroy(tree);
-    return;
+static void Sequence_destroy_annotation_tree(void *tree){
+    while (tree) {
+        Sequence_Annotation* tmp = *(Sequence_Annotation **)tree; /*root node*/
+        tdelete((void*)tmp, &tree, Sequence_Annotation_compare);
+        Sequence_Annotation_destroy((Sequence_Annotation*)tmp);
+        }
     }
 
 static void Sequence_Argument_cleanup(gpointer user_data){
@@ -167,6 +162,7 @@ static Sequence *Sequence_create_internal(gchar *id, gchar *def, guint len,
     register Sequence *s = g_new0(Sequence, 1);
     register Sequence_ArgumentSet *sas
            = Sequence_ArgumentSet_create(NULL);
+    void *tree_node;
     s->ref_count = 1;
     if(id)
         s->id  = g_strdup(id);
@@ -177,9 +173,9 @@ static Sequence *Sequence_create_internal(gchar *id, gchar *def, guint len,
         s->alphabet = Alphabet_share(alphabet);
     else
         s->alphabet = Alphabet_create(Alphabet_Type_UNKNOWN, FALSE);
-    s->annotation = sas->annotation_tree
-                  ? g_tree_lookup(sas->annotation_tree, s->id)
-                  : NULL;
+    tree_node = tfind((void*)s->id, &sas->annotation_tree,
+                       Sequence_Annotation_compare);
+    s->annotation = tree_node ? *(Sequence_Annotation **)tree_node : NULL;
     s->len = len;
 #ifdef USE_PTHREADS
     pthread_mutex_init(&s->seq_lock, NULL);

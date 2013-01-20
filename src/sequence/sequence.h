@@ -55,7 +55,7 @@ typedef struct {
 
 typedef struct {
     gchar *annotation_path;
-    GTree *annotation_tree;
+    void *annotation_tree;
 } Sequence_ArgumentSet;
 
 Sequence_ArgumentSet *Sequence_ArgumentSet_create(Argument *arg);
