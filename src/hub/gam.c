@@ -694,7 +694,8 @@ static C4_Score GAM_get_query_threshold(GAM *gam, Sequence *query){
     if(gam->gas->percent_threshold){
         tree_node = tfind((void*)&gq_lookup, &gam->percent_threshold_tree, 
                           GAM_compare_id);
-        if(!tree_node){
+        gqi = tree_node ? *(GAM_QueryInfo **)tree_node : NULL;
+        if(!gqi){
             gqi = GAM_QueryInfo_create(query, gam);
             tsearch((void*)gqi, &gam->percent_threshold_tree, GAM_compare_id);
             }
@@ -1022,7 +1023,6 @@ static gint GAM_Result_geneseed_select(HSPset *hspset,
     register HSP *hsp;
     if(!hspset)
         return hsp_id;
-    keep_list = g_ptr_array_new();
     for(i = 0; i < hspset->hsp_list->len; i++){
         hsp = hspset->hsp_list->pdata[i];
         if(fwd_keep[hsp_id] || rev_keep[hsp_id]){
@@ -1258,7 +1258,8 @@ void GAM_Result_submit(GAM_Result *gam_result){
         void *tree_node = tfind((void*)&gqr_lookup,
                                       &gam_result->gam->bestn_tree,
                                       GAM_compare_id);
-        if(!tree_node){
+        gqr = tree_node ? *(GAM_QueryResult **)tree_node : NULL;
+        if(!gqr){
             gqr = GAM_QueryResult_create(gam_result->gam,
                                          gam_result->query->id);
             tsearch((void*)gqr, &gam_result->gam->bestn_tree, GAM_compare_id);
