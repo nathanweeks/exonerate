@@ -620,15 +620,15 @@ Model name
 Equivalenced {total,id,similarity,mismatches}
 (ie. %em == (%et - %ei))
 .TP
-.B %p[iIsS]
-Percent {id,BLASTId,similarity,Self}
+.B %p[ciIsS]
+Percent {query_coverage,id,BLASTId,similarity,Self}
 over the equivalenced portions of the alignment.
 (i.e. %pi == 100*(%ei / %et)), with the exception of percent BLASTId, which is
 calculated as %pI == 100*(%et + query gaps + target gaps).
+Percent query coverage is defined as %pc == 100*(%et/%ql).
 Percent Self is the score over the equivalenced portions
 of the alignment as a percentage of the self comparison score
 of the query sequence.
-Percent blastId is the 
 .TP
 .B %g
 Gene orientation ('+' = forward, '-' = reverse, '.' = unknown)

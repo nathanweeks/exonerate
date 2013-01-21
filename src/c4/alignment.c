@@ -1535,18 +1535,19 @@ static gfloat Alignment_get_percent_score_region(Alignment *alignment,
 static float Alignment_get_blast_percent_id(Alignment *alignment,
               Sequence *query, Sequence *target,
               Translate *translate, gpointer user_data){
-fprintf(stderr, "Alignment_get_equivalenced_matching: %i\n", 
-    Alignment_get_equivalenced_matching(alignment,
-            query, target, translate, TRUE, user_data));
-fprintf(stderr, "Alignment_get_equivalenced_total: %i\n", 
-          Alignment_get_equivalenced_total(alignment));
-fprintf(stderr, "Alignment_get_gaps: %i\n", 
-          Alignment_get_gaps(alignment));
     return ((float)Alignment_get_equivalenced_matching(alignment,
             query, target, translate, TRUE, user_data)
           / ((float)Alignment_get_equivalenced_total(alignment) +
              (float)Alignment_get_gaps(alignment)))*100;
     }
+
+/* percent query coverage == equivalenced total / query length */
+static float Alignment_get_percent_query_coverage(Alignment *alignment,
+              Sequence *query){
+    return ((float)Alignment_get_equivalenced_total(alignment)
+          / (float)query->len)*100;
+    }
+
 /* FIXME: should also count split codons */
 
 static gfloat Alignment_get_percent_score(Alignment *alignment,
@@ -1792,6 +1793,7 @@ typedef enum {
     Alignment_RYO_TOKEN_RANK,
     Alignment_RYO_TOKEN_BLAST_PERCENT_ID,
     Alignment_RYO_TOKEN_PERCENT_ID,
+    Alignment_RYO_TOKEN_PERCENT_QUERY_COVERAGE,
     Alignment_RYO_TOKEN_PERCENT_SIMILARITY,
     Alignment_RYO_TOKEN_PERCENT_SELF,
     Alignment_RYO_TOKEN_GENE_ORIENTATION,
@@ -2078,6 +2080,10 @@ static GPtrArray *Alignment_RYO_tokenise(gchar *format){
                         break;
                     case 'p':
                         switch(format[i+2]){
+                            case 'c':
+                                Alignment_RYO_add_token(token_list,
+                                 Alignment_RYO_TOKEN_PERCENT_QUERY_COVERAGE, FALSE);
+                                break;
                             case 'I':
                                 Alignment_RYO_add_token(token_list,
                                  Alignment_RYO_TOKEN_BLAST_PERCENT_ID, FALSE);
@@ -2506,6 +2512,10 @@ static void Alignment_RYO_token_list_print(GPtrArray *token_list,
                     fprintf(fp, "%d", rank);
                 break;
             /**/
+            case Alignment_RYO_TOKEN_PERCENT_QUERY_COVERAGE:
+                fprintf(fp, "%2.2f", Alignment_get_percent_query_coverage(
+                                 alignment, query));
+                break;
             case Alignment_RYO_TOKEN_BLAST_PERCENT_ID:
                 fprintf(fp, "%2.2f", Alignment_get_blast_percent_id(
                                  alignment, query, target,
