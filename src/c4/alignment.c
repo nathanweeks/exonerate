@@ -1480,6 +1480,18 @@ static gint Alignment_get_equivalenced_total(Alignment *alignment){
     return total;
     }
 
+/* report the number of gap bases found */
+static int Alignment_get_gaps(Alignment *alignment){
+    int i, total = 0;
+    AlignmentOperation *ao;
+    for(i = 0; i < alignment->operation_list->len; i++){
+        ao = alignment->operation_list->pdata[i];
+        if(ao->transition->label == C4_Label_GAP)
+            total += ao->length;
+        }
+    return total;
+    }
+
 static gint Alignment_get_equivalenced_total_region(Alignment *alignment,
                           gint exon_query_start, gint exon_query_end){
     register gint i, j, total = 0;
@@ -1518,6 +1530,22 @@ static gfloat Alignment_get_percent_score_region(Alignment *alignment,
                      exon_query_start, exon_query_end))
           / ((gfloat)Alignment_get_equivalenced_total_region(alignment,
                          exon_query_start, exon_query_end)))*100;
+    }
+
+static float Alignment_get_blast_percent_id(Alignment *alignment,
+              Sequence *query, Sequence *target,
+              Translate *translate, gpointer user_data){
+fprintf(stderr, "Alignment_get_equivalenced_matching: %i\n", 
+    Alignment_get_equivalenced_matching(alignment,
+            query, target, translate, TRUE, user_data));
+fprintf(stderr, "Alignment_get_equivalenced_total: %i\n", 
+          Alignment_get_equivalenced_total(alignment));
+fprintf(stderr, "Alignment_get_gaps: %i\n", 
+          Alignment_get_gaps(alignment));
+    return ((float)Alignment_get_equivalenced_matching(alignment,
+            query, target, translate, TRUE, user_data)
+          / ((float)Alignment_get_equivalenced_total(alignment) +
+             (float)Alignment_get_gaps(alignment)))*100;
     }
 /* FIXME: should also count split codons */
 
@@ -1762,6 +1790,7 @@ typedef enum {
     Alignment_RYO_TOKEN_SCORE,
     Alignment_RYO_TOKEN_MODEL_NAME,
     Alignment_RYO_TOKEN_RANK,
+    Alignment_RYO_TOKEN_BLAST_PERCENT_ID,
     Alignment_RYO_TOKEN_PERCENT_ID,
     Alignment_RYO_TOKEN_PERCENT_SIMILARITY,
     Alignment_RYO_TOKEN_PERCENT_SELF,
@@ -2049,6 +2078,10 @@ static GPtrArray *Alignment_RYO_tokenise(gchar *format){
                         break;
                     case 'p':
                         switch(format[i+2]){
+                            case 'I':
+                                Alignment_RYO_add_token(token_list,
+                                 Alignment_RYO_TOKEN_BLAST_PERCENT_ID, FALSE);
+                                break;
                             case 'i':
                                 Alignment_RYO_add_token(token_list,
                                  Alignment_RYO_TOKEN_PERCENT_ID, FALSE);
@@ -2473,6 +2506,11 @@ static void Alignment_RYO_token_list_print(GPtrArray *token_list,
                     fprintf(fp, "%d", rank);
                 break;
             /**/
+            case Alignment_RYO_TOKEN_BLAST_PERCENT_ID:
+                fprintf(fp, "%2.2f", Alignment_get_blast_percent_id(
+                                 alignment, query, target,
+                                 translate, user_data));
+                break;
             case Alignment_RYO_TOKEN_PERCENT_ID:
                 fprintf(fp, "%2.2f", Alignment_get_percent_score(
                                  alignment, query, target,
