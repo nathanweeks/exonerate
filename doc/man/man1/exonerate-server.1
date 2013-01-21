@@ -11,7 +11,7 @@ exonerate-server \- a sequence comparison server for exonerate
 
 .SH DESCRIPTION
 .BR exonerate-server
-is a multi-threaded server for the exonerate sequence alignment program.
+is a server for the exonerate sequence alignment program.
 
 It uses a set of sequences and a corresponding index file
 to allow fast of large datasets.
@@ -117,7 +117,7 @@ the server.
 .\"
 .TP
 .B "\--maxconnections" <count>
-The server is multithreaded.  This option sets the number client processes
+Set the number client processes
 which are allowed to connect to the server simultaneously.
 For good performance, it should not be set to more than the number of CPUs
 on the machine on which the server is running.
@@ -173,9 +173,10 @@ For examples, see the replies from the
 commands in the example session below.
 .P
 .\"
-The client will only open a single connection to any server,
-although a multithreaded server is obviously required to allow multiple clients
-to connect simultaneously.
+The client will only open a single connection to any server.
+A server will accept as many simultaneous client connections as is specified
+by the --maxconnections option or the
+EXONERATE_EXONERATE_SERVER_MAXCONNECTIONS environment variable.
 .\"
 .P
 .SS Commands and replies used in for the interface.
