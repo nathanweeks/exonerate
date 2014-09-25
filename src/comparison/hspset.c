@@ -35,10 +35,10 @@ HSPset_ArgumentSet *HSPset_ArgumentSet_create(Argument *arg){
                 "Seeds per diagonal required for HSP seeding", "1",
                 Argument_parse_int, &has.seed_repeat);
         /**/
-        ArgumentSet_add_option(as, 0, "dnawordlen", "bp",
+        ArgumentSet_add_option(as, '-w', "dnawordlen", "bp",
             "Wordlength for DNA words", "12",
             Argument_parse_int, &has.dna_wordlen);
-        ArgumentSet_add_option(as, 0, "proteinwordlen", "aa",
+        ArgumentSet_add_option(as, '-W', "proteinwordlen", "aa",
             "Wordlength for protein words", "6",
             Argument_parse_int, &has.protein_wordlen);
         ArgumentSet_add_option(as, 0, "codonwordlen", "bp",
