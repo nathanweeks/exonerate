@@ -88,11 +88,7 @@ typedef struct PCR {
           gboolean  is_prepared;
              gsize  experiment_memory_usage;
               gint  sensor_count;
-         GMemChunk *sensor_mem_chunk;
           gpointer  user_data;
-      GStringChunk *string_chunk;
-         GMemChunk *probe_mem_chunk;
-         GMemChunk *match_mem_chunk;
          PCR_Match *match_recycle;
 } PCR;
 

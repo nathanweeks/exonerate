@@ -13,11 +13,12 @@
 *                                                                *
 \****************************************************************/
 
-#include "exonerate_util.h"
 #include "pcr.h"
 #include "submat.h"
 #include "sequence.h"
 
+#include "exonerate_util.h"
+#include <stdlib.h> /* For free() */
 #include <string.h> /* For strlen() */
 
 /**/
@@ -29,7 +30,7 @@ static PCR_Match *PCR_Match_allocate(PCR *pcr){
         /* pcr_match->pcr_probe is used as the next pointer */
         pcr->match_recycle = (PCR_Match*)pcr_match->pcr_probe;
     } else {
-        pcr_match = g_chunk_new(PCR_Match, pcr->match_mem_chunk);
+        pcr_match = (PCR_Match *)malloc(sizeof(PCR_Match));
         }
     return pcr_match;
     }
@@ -57,18 +58,11 @@ static void PCR_Match_destroy(PCR_Match *pcr_match){
 static PCR_Probe *PCR_Probe_create(PCR_Primer *pcr_primer,
        Sequence_Strand strand, gchar *probe, gint mismatch){
     register PCR *pcr = pcr_primer->pcr_experiment->pcr;
-    register PCR_Probe *pcr_probe = g_chunk_new(PCR_Probe,
-                                    pcr->probe_mem_chunk);
+    PCR_Probe *pcr_probe = (PCR_Probe *)malloc(sizeof(PCR_Probe));
     pcr_probe->pcr_primer = pcr_primer;
     pcr_probe->strand = strand;
     pcr_probe->mismatch = mismatch;
     return pcr_probe;
-    }
-
-static void PCR_Probe_destroy(PCR_Probe *pcr_probe){
-    register PCR *pcr = pcr_probe->pcr_primer->pcr_experiment->pcr;
-    g_mem_chunk_free(pcr->probe_mem_chunk, pcr_probe);
-    return;
     }
 
 static void PCR_Probe_register_hit(PCR_Probe *pcr_probe,
@@ -153,8 +147,7 @@ static void PCR_Probe_register_hit(PCR_Probe *pcr_probe,
 /**/
 
 static PCR_Sensor *PCR_Sensor_create(PCR *pcr){
-    register PCR_Sensor *pcr_sensor = g_chunk_new(PCR_Sensor,
-                                            pcr->sensor_mem_chunk);
+    PCR_Sensor *pcr_sensor = (PCR_Sensor *)malloc(sizeof(PCR_Sensor));
     pcr_sensor->owned_probe_list = SList_create(pcr->slist_set);
     pcr_sensor->borrowed_sensor_list
                                     = SList_create(pcr->slist_set);
@@ -167,12 +160,12 @@ static void PCR_Sensor_destroy(PCR_Sensor *pcr_sensor, PCR *pcr){
     if(pcr_sensor->owned_probe_list){ /* Maybe removed in merge */
         while(!SList_isempty(pcr_sensor->owned_probe_list)){
             pcr_probe = SList_pop(pcr_sensor->owned_probe_list);
-            PCR_Probe_destroy(pcr_probe);
+            free(pcr_probe);
             }
         SList_destroy(pcr_sensor->owned_probe_list);
         }
     SList_destroy(pcr_sensor->borrowed_sensor_list);
-    g_mem_chunk_free(pcr->sensor_mem_chunk, pcr_sensor);
+    free(pcr_sensor);
     pcr->sensor_count--;
     return;
     }
@@ -235,7 +228,7 @@ static gboolean PCR_Primer_Wordhood_traverse_func(gchar *word,
 
 static PCR_Primer *PCR_Primer_create(PCR_Experiment *pcr_experiment,
                                      gchar *primer){
-    register PCR_Primer *pcr_primer = g_new(PCR_Primer, 1);
+    PCR_Primer *pcr_primer = (PCR_Primer*)malloc(sizeof(PCR_Primer)* 1);
     g_assert(pcr_experiment);
     g_assert(primer);
     pcr_primer->pcr_experiment = pcr_experiment;
@@ -245,10 +238,8 @@ static PCR_Primer *PCR_Primer_create(PCR_Experiment *pcr_experiment,
         pcr_primer->probe_len = pcr_experiment->pcr->seed_length;
     else
         pcr_primer->probe_len = pcr_primer->length;
-    pcr_primer->forward = g_string_chunk_insert(
-                             pcr_experiment->pcr->string_chunk, primer);
-    pcr_primer->revcomp = g_string_chunk_insert(
-                             pcr_experiment->pcr->string_chunk, primer);
+    pcr_primer->forward = strdup(primer);
+    pcr_primer->revcomp = strdup(primer);
     Sequence_revcomp_in_place(pcr_primer->revcomp, pcr_primer->length);
     strup(pcr_primer->forward);
     strup(pcr_primer->revcomp);
@@ -264,10 +255,11 @@ static PCR_Primer *PCR_Primer_create(PCR_Experiment *pcr_experiment,
 static void PCR_Primer_destroy(PCR_Primer *pcr_primer){
     register gint i;
     for(i = 0; i < pcr_primer->probe_list->len; i++)
-        PCR_Probe_destroy(pcr_primer->probe_list->pdata[i]);
+        free(pcr_primer->probe_list->pdata[i]);
+    free(pcr_primer->forward);
+    free(pcr_primer->revcomp);
     g_ptr_array_free(pcr_primer->probe_list, TRUE);
     g_free(pcr_primer);
-    return;
     }
 
 static gsize PCR_Primer_memory_usage(PCR_Primer *pcr_primer){
@@ -283,7 +275,7 @@ static gsize PCR_Primer_memory_usage(PCR_Primer *pcr_primer){
 static PCR_Experiment *PCR_Experiment_create(PCR *pcr, gchar *id,
                  gchar *primer_a, gchar *primer_b,
                  gint min_product_len, gint max_product_len){
-    register PCR_Experiment *pcr_experiment = g_new(PCR_Experiment, 1);
+    PCR_Experiment *pcr_experiment = (PCR_Experiment*)malloc(sizeof(PCR_Experiment)* 1);
     /*
     g_message("Adding [%s][%s][%s][%d][%d]",
             id, primer_a, primer_b, min_product_len, max_product_len);
@@ -294,7 +286,7 @@ static PCR_Experiment *PCR_Experiment_create(PCR *pcr, gchar *id,
     g_assert(min_product_len > 0);
     g_assert(max_product_len >= min_product_len);
     pcr_experiment->pcr = pcr;
-    pcr_experiment->id = g_string_chunk_insert(pcr->string_chunk, id);
+    pcr_experiment->id = strdup(id);
     pcr_experiment->primer_a = PCR_Primer_create(pcr_experiment,
                                                  primer_a);
     pcr_experiment->primer_b = PCR_Primer_create(pcr_experiment,
@@ -312,7 +304,6 @@ static void PCR_Experiment_clear(PCR_Experiment *pcr_experiment){
         pcr_match = SList_pop(pcr_experiment->match_list);
         PCR_Match_destroy(pcr_match);
         }
-    return;
     }
 
 static void PCR_Experiment_destroy(PCR_Experiment *pcr_experiment){
@@ -321,6 +312,7 @@ static void PCR_Experiment_destroy(PCR_Experiment *pcr_experiment){
     PCR_Primer_destroy(pcr_experiment->primer_a);
     PCR_Primer_destroy(pcr_experiment->primer_b);
     SList_destroy(pcr_experiment->match_list);
+    free(pcr_experiment->id);
     g_free(pcr_experiment);
     return;
     }
@@ -338,7 +330,7 @@ static gsize PCR_Experiment_memory_usage(
 
 PCR *PCR_create(PCR_ReportFunc report_func, gpointer user_data,
                 gint mismatch_threshold, gint seed_length){
-    register PCR *pcr = g_new(PCR, 1);
+    PCR *pcr = (PCR*)malloc(sizeof(PCR)* 1);
     register Submat *submat = Submat_create("iupac-identity");
     register WordHood_Alphabet *wha;
     pcr->slist_set = SListSet_create();
@@ -355,18 +347,8 @@ PCR *PCR_create(PCR_ReportFunc report_func, gpointer user_data,
     WordHood_Alphabet_destroy(wha);
     pcr->experiment_memory_usage = 0;
     pcr->sensor_count = 0;
-    pcr->sensor_mem_chunk = g_mem_chunk_new("PCR_Sensor",
-                         sizeof(PCR_Sensor), sizeof(PCR_Sensor)*4096,
-                         G_ALLOC_AND_FREE);
     pcr->user_data = user_data;
     Submat_destroy(submat);
-    pcr->string_chunk = g_string_chunk_new(4096);
-    pcr->probe_mem_chunk = g_mem_chunk_new("PCR_Probe",
-                         sizeof(PCR_Probe), sizeof(PCR_Probe)*4096,
-                         G_ALLOC_AND_FREE);
-    pcr->match_mem_chunk = g_mem_chunk_new("PCR_Match",
-                         sizeof(PCR_Match), sizeof(PCR_Match)*4096,
-                         G_ALLOC_ONLY);
     pcr->match_recycle = NULL;
     return pcr;
     }
@@ -379,11 +361,7 @@ void PCR_destroy(PCR *pcr){
     FSM_destroy(pcr->fsm);
     WordHood_destroy(pcr->wordhood);
     SListSet_destroy(pcr->slist_set);
-    g_mem_chunk_destroy(pcr->sensor_mem_chunk);
-    g_string_chunk_free(pcr->string_chunk);
-    g_mem_chunk_destroy(pcr->probe_mem_chunk);
-    g_mem_chunk_destroy(pcr->match_mem_chunk);
-    g_free(pcr);
+    free(pcr);
     return;
     }
 
