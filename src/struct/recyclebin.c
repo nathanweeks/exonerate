@@ -13,19 +13,21 @@
 *                                                                *
 \****************************************************************/
 
+#include <search.h> /* For tdelete(), tfind(), tsearch(), and twalk() */
 #include <string.h>
 #include "recyclebin.h"
 
-#ifndef USE_PTHREADS
-static GTree *global_recycle_bin_tree = NULL;
-#endif /* USE_PTHREADS */
+static void *global_recycle_bin_tree = NULL;
 
-#ifndef USE_PTHREADS
-static gint RecycleBin_compare(gconstpointer a,
-                               gconstpointer b){
-    return a - b;
+static int RecycleBin_compare(const void *a,
+                              const void *b){
+    if ((char*)a - (char*)b == 0)
+        return 0;
+    else if ((char*)a - (char*)b < 0)
+        return -1;
+    else
+        return 1;
     }
-#endif /* USE_PTHREADS */
 
 RecycleBin *RecycleBin_create(gchar *name, gsize node_size,
                               gint nodes_per_chunk){
@@ -40,11 +42,7 @@ RecycleBin *RecycleBin_create(gchar *name, gsize node_size,
     recycle_bin->node_size = node_size;
     recycle_bin->count = 0;
     recycle_bin->recycle = NULL;
-#ifndef USE_PTHREADS
-    if(!global_recycle_bin_tree)
-        global_recycle_bin_tree = g_tree_new(RecycleBin_compare);
-    g_tree_insert(global_recycle_bin_tree, recycle_bin, recycle_bin);
-#endif /* USE_PTHREADS */
+    tsearch((void *)recycle_bin, &global_recycle_bin_tree, RecycleBin_compare);
     return recycle_bin;
     }
 
@@ -52,15 +50,10 @@ void RecycleBin_destroy(RecycleBin *recycle_bin){
     register gint i;
     if(--recycle_bin->ref_count)
         return;
-#ifndef USE_PTHREADS
     g_assert(global_recycle_bin_tree);
-    g_assert(g_tree_lookup(global_recycle_bin_tree, recycle_bin));
-    g_tree_remove(global_recycle_bin_tree, recycle_bin);
-    if(!g_tree_nnodes(global_recycle_bin_tree)){
-        g_tree_destroy(global_recycle_bin_tree);
-        global_recycle_bin_tree = NULL;
-        }
-#endif /* USE_PTHREADS */
+    g_assert(tfind((void *)recycle_bin, &global_recycle_bin_tree, 
+           RecycleBin_compare));
+    tdelete((void *)recycle_bin, &global_recycle_bin_tree, RecycleBin_compare);
     for(i = 0; i < recycle_bin->chunk_list->len; i++)
         g_free(recycle_bin->chunk_list->pdata[i]);
     g_ptr_array_free(recycle_bin->chunk_list, TRUE);
@@ -123,31 +116,25 @@ void RecycleBin_recycle(RecycleBin *recycle_bin, gpointer data){
     return;
     }
 
-#ifndef USE_PTHREADS
-static gint RecycleBin_profile_traverse(gpointer key,
-                                        gpointer value,
-                                        gpointer data){
-    register RecycleBin *recycle_bin = value;
-    g_assert(recycle_bin);
-    g_message("  RecycleBin [%s] %d Mb (%d items)",
-              recycle_bin->name,
-              (gint)(RecycleBin_memory_usage(recycle_bin)>>20),
-              recycle_bin->count);
-    return FALSE;
+static void RecycleBin_profile_traverse(const void *ptr,
+                                             VISIT order,
+                                               int level){
+    if (order == postorder || order == leaf) {
+        RecycleBin *recycle_bin = *(RecycleBin **)ptr;
+        g_assert(recycle_bin);
+        g_message("  RecycleBin [%s] %d Mb (%d items)",
+                  recycle_bin->name,
+                  (gint)(RecycleBin_memory_usage(recycle_bin)>>20),
+                  recycle_bin->count);
+        }
     }
-#endif /* USE_PTHREADS */
 
 void RecycleBin_profile(void){
     g_message("BEGIN RecycleBin profile");
-#ifdef USE_PTHREADS
-    g_message("multi-threaded RecycleBin_profile() not implemented");
-#else /* USE_PTHREADS */
     if(global_recycle_bin_tree)
-        g_tree_traverse(global_recycle_bin_tree,
-                        RecycleBin_profile_traverse, G_IN_ORDER, NULL);
+        twalk(global_recycle_bin_tree, RecycleBin_profile_traverse);
     else
         g_message("no active RecycleBins");
-#endif /* USE_PTHREADS */
     g_message("END RecycleBin profile");
     return;
     }

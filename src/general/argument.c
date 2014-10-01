@@ -14,12 +14,15 @@
 \****************************************************************/
 
 #include "argument.h"
+#include <search.h> /* For tdelete(), tfind(), tsearch(), twalk() */
 #include <stdio.h>  /* For fprintf() */
 #include <stdlib.h> /* For exit() */
 #include <string.h> /* For strlen() */
 #include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For isalnum() */
 #include <unistd.h> /* For gethostname() */
+
+static void *_twalk_data; /* data to pass to twalk() */
 
 static ArgumentOption *ArgumentOption_create(ArgumentSet *as,
                                              gchar symbol,
@@ -59,6 +62,19 @@ static void ArgumentOption_destroy(ArgumentOption *ao){
     return;
     }
 
+static int Argument_strcmp_compare(const void *node1, const void *node2){
+    return strcmp(((const ArgumentOption *)node1)->option, 
+                  ((const ArgumentOption *)node2)->option);
+    }
+
+static void ArgumentSet_nodes_destroy(ArgumentSet *as, void **option_registry){
+    int i;
+    ArgumentOption *ao;
+    for(i = 0; i < as->arg_option->len; i++){
+        ao = as->arg_option->pdata[i];
+        tdelete((void *)ao, option_registry, Argument_strcmp_compare);
+        }
+    }
 static void ArgumentSet_destroy(ArgumentSet *as){
     register gint i;
     register ArgumentOption *ao;
@@ -232,16 +248,11 @@ static void Argument_cleanup(Argument *arg){
 
 /**/
 
-static gint Argument_strcmp_compare(gconstpointer a, gconstpointer b){
-    return strcmp((gchar*)a, (gchar*)b);
-    }
-
 static Argument *Argument_create(gint argc, gchar **argv){
     register Argument *arg = g_new0(Argument, 1);
     arg->arg_set = g_ptr_array_new();
     arg->mandatory_set = g_ptr_array_new();
     arg->cleanup_list = g_ptr_array_new();
-    arg->option_registry = g_tree_new(Argument_strcmp_compare);
     arg->argc = argc;
     arg->argv = argv;
     Argument_add_standard_options(arg);
@@ -251,6 +262,12 @@ static Argument *Argument_create(gint argc, gchar **argv){
 static void Argument_destroy(Argument *arg){
     register ArgumentSet *as;
     register gint i;
+
+    for(i = 0; i < arg->arg_set->len; i++) {
+        as = arg->arg_set->pdata[i];
+        ArgumentSet_nodes_destroy(as, &arg->option_registry);
+        }
+
     for(i = 0; i < arg->arg_set->len; i++){
         as = arg->arg_set->pdata[i];
         ArgumentSet_destroy(as);
@@ -259,7 +276,6 @@ static void Argument_destroy(Argument *arg){
     g_ptr_array_free(arg->cleanup_list, TRUE);
     g_ptr_array_free(arg->mandatory_set, TRUE);
     g_ptr_array_free(arg->arg_set, TRUE);
-    g_tree_destroy(arg->option_registry);
     g_free(arg->name);
     g_free(arg->desc);
     g_free(arg);
@@ -407,28 +423,28 @@ static void Argument_long_help(Argument *arg){
     return;
     }
 
-static gint Argument_set_env_var_func(gpointer key,
-                                      gpointer value,
-                                      gpointer data){
-    register ArgumentOption *ao = (ArgumentOption*)value;
-    register gchar *name = (gchar*)data;
-    register gint i;
+/* set _twalk_data before calling twalk(tree, Argument_set_env_var_func) */
+static void Argument_set_env_var_func(const void *ptr,
+                                      VISIT order,
+                                      int level){
+    ArgumentOption *ao = *(ArgumentOption **)ptr;
+    int i;
     ao->env_var = g_strdup_printf("%s_%s_%s",
-                  PACKAGE, name, ao->option);
+                  PACKAGE, (char *)_twalk_data, ao->option);
     for(i = strlen(ao->env_var)-1; i >= 0; i--)
         if(isalnum(ao->env_var[i]))
             ao->env_var[i] = toupper(ao->env_var[i]);
         else
             ao->env_var[i] = '_';
-    return FALSE;
     }
 
-static gint Argument_traverse_registry_func(gpointer key,
-                                            gpointer value,
-                                            gpointer data){
-    register ArgumentOption *ao = (ArgumentOption*)value;
-    register GPtrArray *error_queue = (GPtrArray*)data;
-    register gchar *err_msg, *env_var;
+/* set _twalk_data before calling twalk(tree,Argument_traverse_registry_func) */
+static void Argument_traverse_registry_func(const void *ptr,
+                                            VISIT order,
+                                            int level){
+    ArgumentOption *ao = *(ArgumentOption**)ptr;
+    GPtrArray *error_queue = (GPtrArray*)_twalk_data;
+    char *err_msg, *env_var;
     if(!ArgumentOption_is_set(ao)){
         env_var = (gchar*)g_getenv(ao->env_var);
         if(env_var)
@@ -440,7 +456,6 @@ static gint Argument_traverse_registry_func(gpointer key,
                 g_strdup_printf(
                     "No value set for mandatory argument --%s <%s>",
                                             ao->option, ao->type));
-                return FALSE;
         } else {
             ArgumentOption_add_value(ao, error_queue,
                                      ao->default_string);
@@ -453,7 +468,6 @@ static gint Argument_traverse_registry_func(gpointer key,
     } else { /* List */
         (*((GPtrArray**)ao->handler_data)) = ao->arg_list;
         }
-    return FALSE;
     }
 
 static ArgumentOption *Argument_process_get_option(Argument *arg,
@@ -462,7 +476,10 @@ static ArgumentOption *Argument_process_get_option(Argument *arg,
     register gint i;
     if(string[0] == '-'){
         if(string[1] == '-'){
-            ao = g_tree_lookup(arg->option_registry, string+2);
+            void *tree_node = tfind((void*)&(ArgumentOption){.option=string+2},
+                                    &arg->option_registry,
+                                    Argument_strcmp_compare);
+            ao = tree_node ? *(ArgumentOption **)tree_node : NULL;
             if(!ao)
                 g_ptr_array_add(error_queue,
                      g_strdup_printf("Unrecognised option \"%s\"",
@@ -500,8 +517,8 @@ void Argument_process(Argument *arg, gchar *name, gchar *desc,
     register GPtrArray *error_queue = g_ptr_array_new();
     arg->desc = desc?g_strdup(desc):g_strdup("");
     arg->name = g_strdup(name);
-    g_tree_traverse(arg->option_registry, Argument_set_env_var_func,
-                    G_IN_ORDER, arg->name);
+    _twalk_data = (void *)arg->name; /* used in Argument_set_env_var_func() */ 
+    twalk(arg->option_registry, Argument_set_env_var_func);
     if(arg->mandatory_set->len && (arg->argc <= 1)){
         Argument_usage(arg, synopsis);
         exit(1);
@@ -557,9 +574,8 @@ void Argument_process(Argument *arg, gchar *name, gchar *desc,
             }
         }
     g_ptr_array_free(unflagged_arg, TRUE);
-    g_tree_traverse(arg->option_registry,
-                    Argument_traverse_registry_func,
-                    G_IN_ORDER, error_queue);
+    _twalk_data = (void *)error_queue;
+    twalk(arg->option_registry, Argument_traverse_registry_func);
     if((!(arg->show_short_help | arg->show_long_help)
         && error_queue->len)){
         Argument_usage(arg, synopsis);
@@ -613,8 +629,9 @@ void Argument_absorb_ArgumentSet(Argument *arg, ArgumentSet *as){
             g_assert(!arg->symbol_registry[(guchar)ao->symbol]);
             arg->symbol_registry[(guchar)ao->symbol] = ao;
             }
-        g_assert(!g_tree_lookup(arg->option_registry, ao));
-        g_tree_insert(arg->option_registry, ao->option, ao);
+        g_assert(!tfind((void *)ao, &arg->option_registry, 
+                      Argument_strcmp_compare));
+        tsearch((void*)ao, &arg->option_registry, Argument_strcmp_compare);
         }
     return;
     }

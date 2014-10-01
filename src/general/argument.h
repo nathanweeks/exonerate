@@ -69,7 +69,7 @@ typedef struct {
          GPtrArray  *arg_set; /* Set of argument sets */
          GPtrArray  *mandatory_set; /* Set of mandatory arguments */
     ArgumentOption  *symbol_registry[ALPHABETSIZE];
-             GTree  *option_registry;
+              void  *option_registry; /* root node of binary search tree */
           gboolean   show_short_help;
           gboolean   show_long_help;
          GPtrArray  *cleanup_list;
