@@ -314,11 +314,9 @@ static gchar *Exonerate_Server_get_subseq(Dataset *dataset, gint num,
 
 static gchar *Exonerate_Server_get_hsps(Exonerate_Server *exonerate_server,
                                         Exonerate_Server_Connection *connection){
-    register gint i, j, hsp_total = 0;
     register GPtrArray *index_hsp_set_list;
     register Index_HSPset *index_hsp_set;
-    register gchar *reply;
-    register GString *str;
+    char *reply;
     register HSP *hsp;
     g_assert(connection->hsp_param);
     g_assert(connection->query);
@@ -345,30 +343,36 @@ static gchar *Exonerate_Server_get_hsps(Exonerate_Server *exonerate_server,
                                                connection->revcomp_target);
         }
     if(index_hsp_set_list){
-        str = g_string_sized_new(1024);
+        int hsp_total = 0, pos = 0;
+        unsigned int i, j;
+        for(i = 0; i <= index_hsp_set_list->len; i++)
+            hsp_total += ((Index_HSPset *)index_hsp_set_list->pdata[i])->hsp_set->hsp_list->len;
+
+        reply = (char *)malloc(((sizeof("hspset: 9999999999")-1) 
+                                 * index_hsp_set_list->len)
+                               + ((sizeof(" 9999999999 9999999999 9999999999")-1) 
+                                  * hsp_total) + 2); /* plus '\n' and '\0' */
+
         for(i = 0; i < index_hsp_set_list->len; i++){
             index_hsp_set = index_hsp_set_list->pdata[i];
             g_assert(index_hsp_set->hsp_set->is_finalised);
-            g_string_sprintfa(str, "hspset: %d", index_hsp_set->target_id);
+            pos += sprintf(&reply[pos], "hspset: %d", index_hsp_set->target_id);
             /**/
-            hsp_total += index_hsp_set->hsp_set->hsp_list->len;
             for(j = 0; j < index_hsp_set->hsp_set->hsp_list->len; j++){
                 hsp = index_hsp_set->hsp_set->hsp_list->pdata[j];
-                g_string_sprintfa(str, " %d %d %d",
+                pos += sprintf(&reply[pos], " %d %d %d",
                         hsp->query_start, hsp->target_start, hsp->length);
                 }
-            g_string_sprintfa(str, "\n");
+            pos += sprintf(&reply[pos], "\n");
             Index_HSPset_destroy(index_hsp_set);
             }
         if(exonerate_server->verbosity > 1)
             g_message("served [%d] HSPsets containing [%d] hsps",
                       index_hsp_set_list->len, hsp_total);
         g_ptr_array_free(index_hsp_set_list, TRUE);
-        reply = str->str;
         g_assert(reply);
-        g_string_free(str, FALSE);
     } else {
-        reply = g_strdup_printf("hspset: empty\n");
+        reply = strdup("hspset: empty\n");
         }
     return reply;
     }
