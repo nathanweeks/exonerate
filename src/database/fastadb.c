@@ -1003,16 +1003,13 @@ static SparseCache_Page *FastaDB_SparseCache_fill_func(gint start,
     register SparseCache_Page *page = g_new(SparseCache_Page, 1);
     register FastaDB_Key *fdbk = user_data;
     register gint ch, pos = 0, len;
-    register gint db_start, db_end;
+    register gint db_start;
     if(fdbk->source->line_length < 1)
         g_error("Unknown or irregular fasta line length");
     db_start = fdbk->seq_offset
              + start
              + (start / (fdbk->source->line_length));
     len = MIN(SparseCache_PAGE_SIZE, fdbk->length-start);
-    db_end = db_start
-           + len
-           + (len / (fdbk->source->line_length));
 #ifdef USE_PTHREADS
     pthread_mutex_lock(&fdbk->source->cf->compoundfile_mutex);
 #endif /* USE_PTHREADS */

@@ -301,12 +301,10 @@ static void Index_visit_words(Index *index, Index_Strand *index_strand,
                               Index_WordVisit_Func iwvf,
                               gboolean is_forward, gpointer user_data){
     register gint i, j;
-    register Dataset_Sequence *dataset_seq;
     register Sequence *ds_seq, *seq, *rc_seq, *aa_seq;
     register Translate *translate = Translate_create(FALSE);
     /* FIXME: move Translate_create() outside of this function */
     for(i = 0; i < index->dataset->seq_list->len; i++){
-        dataset_seq = index->dataset->seq_list->pdata[i];
         ds_seq = Dataset_get_sequence(index->dataset, i);
         seq = Sequence_mask(ds_seq);
         Sequence_destroy(ds_seq);
@@ -583,14 +581,12 @@ static void Index_report_words_visit(Index *index, Index_Strand *index_strand,
                                      gint seq_id, gint seq_pos,
                                      gint leaf_id, gpointer user_data){
     register gint word_id = index_strand->word_table[leaf_id];
-    register Index_Word *index_word;
     register Index_AddressData *address_data = user_data;
     register Index_AddressList *address_list;
     /* Skip word which are outside the interval for this pass */
     if((word_id < address_data->first_word)
     || (word_id >= (address_data->first_word+address_data->interval_len)))
         return;
-    index_word = &index_strand->word_list[word_id];
     address_list
         = address_data->address_list_array[word_id-address_data->first_word];
     Index_AddressList_append(address_list, seq_id, seq_pos);

@@ -562,7 +562,6 @@ GPtrArray *Viterbi_Checkpoint_traceback(Viterbi *viterbi,
                    final_cell, vd->checkpoint->cell_size);
     g_assert(Region_is_within(region, vsa->region));
     g_ptr_array_add(vsa_list, vsa);
-    prev_row = srp.row;
     for(i = vd->checkpoint->checkpoint_list->len-1; i >= 1; i--){
         checkpoint = vd->checkpoint->checkpoint_list->pdata[i];
         prev_row = srp.row;

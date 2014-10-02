@@ -57,7 +57,6 @@ static void PCR_Match_destroy(PCR_Match *pcr_match){
 
 static PCR_Probe *PCR_Probe_create(PCR_Primer *pcr_primer,
        Sequence_Strand strand, gchar *probe, gint mismatch){
-    register PCR *pcr = pcr_primer->pcr_experiment->pcr;
     PCR_Probe *pcr_probe = (PCR_Probe *)malloc(sizeof(PCR_Probe));
     pcr_probe->pcr_primer = pcr_primer;
     pcr_probe->strand = strand;

@@ -113,10 +113,8 @@ static gchar *SocketConnection_read(gint sock){
     register gboolean line_count_given = FALSE;
     gchar buffer[Socket_BUFSIZE+1];
     do {
-        if((len = recv(sock, buffer, Socket_BUFSIZE, 0)) <= 0){
-            len = 0;
+        if((len = recv(sock, buffer, Socket_BUFSIZE, 0)) <= 0)
             break;
-            }
         buffer[len] = '\0';
         for(i = 0; i < len; i++)
             if(buffer[i] == '\n')

@@ -1096,7 +1096,6 @@ void HSPset_seed_all_hsps(HSPset *hsp_set,
                           guint *seed_list, guint seed_list_len){
     register gint i;
     register gint ***horizon;
-    register gint qpos, tpos;
     if(seed_list_len > 1){
         HSPset_seed_compare_hsp_set = hsp_set;
         qsort(seed_list, seed_list_len, sizeof(guint) << 1,
@@ -1108,14 +1107,11 @@ void HSPset_seed_all_hsps(HSPset *hsp_set,
                      hsp_set->param->match->query->advance,
                      hsp_set->param->match->target->advance,
                      sizeof(gint));
-        for(i = 0; i < seed_list_len; i++){
+        for(i = 0; i < seed_list_len; i++)
             HSPset_seed_hsp_sorted(hsp_set,
                                    seed_list[(i << 1)],
                                    seed_list[(i << 1) + 1],
                                    horizon);
-            qpos = seed_list[(i << 1)];
-            tpos = seed_list[(i << 1) + 1];
-            }
         g_free(horizon);
         }
     HSPset_finalise(hsp_set);
