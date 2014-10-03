@@ -69,7 +69,7 @@ EXTRA_exonerate_SOURCES = c4_model_archive.a c4_model_archive.h
 BUILT_SOURCES = c4_model_archive.a
 BOOTSTRAPPER = $(top_srcdir)/src/model/bootstrapper
 c4_model_archive.h: $(BOOTSTRAPPER)
-	$(BOOTSTRAPPER) --compiled no
+	CC="$(CC)" CFLAGS="$(CFLAGS)" $(BOOTSTRAPPER) --compiled no
 c4_model_archive.a: $(BOOTSTRAPPER)
 	$(BOOTSTRAPPER) --compiled no
 
