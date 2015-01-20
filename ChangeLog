@@ -1,3 +1,13 @@
+2.4.0 -> 2.4.1
+    o Added %pc to --ryo (percent query coverage)
+    o Added %pI to --ryo (BLAST-compatible percent identity)
+    o Added GFF2 Target attribute to exon features produced by --showtargetgff
+    o Added passing of querytype param to server
+    o Fixed rare bug with --refine region
+    o Disabled multi-threading due to exonerate-server reliability issues
+    o Fixed bugs in non-threaded exonerate-server (configured with
+      --disable-pthreads, which is now the default)
+    o Replaced several deprecated glib functions with POSIX equivalents
 
 2.3.0 -> 2.4.0
     o Fixed many thread safety bugs
