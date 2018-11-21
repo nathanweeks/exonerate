@@ -8,6 +8,8 @@
     o Fixed bugs in non-threaded exonerate-server (configured with
       --disable-pthreads, which is now the default)
     o Replaced several deprecated glib functions with POSIX equivalents
+    o Fixed Selenocysteine (U) parsing.
+      As with BLAST+ 2.4.0, exonerate scores Selenocysteine as Cysteine (C)
 
 2.3.0 -> 2.4.0
     o Fixed many thread safety bugs
