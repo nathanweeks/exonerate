@@ -19,7 +19,7 @@ $ make check
 $ make install
 ```
 
-To build the development version (at your own risk!):
+To build the master branch:
 
 ```
 $ git clone https://github.com/nathanweeks/exonerate.git

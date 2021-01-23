@@ -2840,6 +2840,9 @@ static void Alignment_display_gff_exon(Alignment *alignment,
                             g_strdup_printf("frameshifts %d",
                                             exon_query_frameshift));
     } else {
+        g_ptr_array_add(attribute_list,
+                        g_strdup_printf("Target %s %d %d", query->id,
+                                        exon_query_start+1, query_pos));
         if(exon_target_frameshift)
             g_ptr_array_add(attribute_list,
                             g_strdup_printf("frameshifts %d",

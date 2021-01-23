@@ -113,10 +113,8 @@ static gchar *SocketConnection_read(gint sock){
     register gboolean line_count_given = FALSE;
     gchar buffer[Socket_BUFSIZE+1];
     do {
-        if((len = recv(sock, buffer, Socket_BUFSIZE, 0)) <= 0){
-            len = 0;
+        if((len = recv(sock, buffer, Socket_BUFSIZE, 0)) <= 0)
             break;
-            }
         buffer[len] = '\0';
         for(i = 0; i < len; i++)
             if(buffer[i] == '\n')
@@ -160,19 +158,17 @@ static void Socket_send_msg(gint sock, gchar *msg, gchar *err_msg){
     }
 
 static void Socket_send(gint sock, gchar *msg, gchar *err_msg){
-    register gint i, line_count = 0;
-    register GString *full_msg = g_string_sized_new(strlen(msg)+32);
-    for(i = 0; msg[i]; i++)
-        if(msg[i] == '\n')
-            line_count++;
-    if(line_count > 1)
-        g_string_sprintfa(full_msg, "linecount: %d\n", line_count+1);
-    g_string_sprintfa(full_msg, "%s", msg);
+    int line_count;
+    char *s, line_count_buf[sizeof("linecount: 9999999999\n")];
+    for(line_count = 0, s = msg; (s = strchr(s, '\n')); s++, line_count++);
+    if(line_count > 1) {
+        snprintf(line_count_buf, sizeof(line_count_buf), "linecount: %d\n",
+                 line_count+1);
+        Socket_send_msg(sock, line_count_buf, err_msg);
+    }
+    Socket_send_msg(sock, msg, err_msg);
     if(!line_count)
-        g_string_append_c(full_msg, '\n');
-    Socket_send_msg(sock, full_msg->str, err_msg);
-    g_string_free(full_msg, TRUE);
-    return;
+        Socket_send_msg(sock, "\n", err_msg);
     }
 
 gchar *SocketClient_send(SocketClient *client, gchar *msg){
