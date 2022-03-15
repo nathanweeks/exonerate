@@ -27,7 +27,6 @@ To build the master branch:
 ```
 $ git clone https://github.com/nathanweeks/exonerate.git
 $ cd exonerate
-$ git checkout develop
 $ autoreconf -i
 $ ./configure [YOUR_CONFIGURE_OPTIONS]
 $ make
