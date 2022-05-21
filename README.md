@@ -38,10 +38,9 @@ This repository contains a Dockerfile that formalizes the process to build and i
 To build a [Docker](https://www.docker.com/) image and execute exonerate (assuming input sequences are in the current working directory or a subdirectory of on the host):
 
 ```
-$ git clone https://github.com/nathanweeks/exonerate.git
-$ cd exonerate
-$ docker build -t exonerate .
-$ docker run -it --rm -v $PWD:/mnt -w /mnt exonerate --version
+$ docker build -t exonerate https://github.com/nathanweeks/exonerate.git
+$ alias exonerate='docker run -it --rm -v $PWD:/mnt -w /mnt exonerate'
+$ exonerate --version
 exonerate from exonerate version 2.4.0
 Using glib version 2.64.3
 Built on Jan 23 2021
