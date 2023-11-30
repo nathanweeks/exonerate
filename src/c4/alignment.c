@@ -405,7 +405,7 @@ static void AlignmentView_add(AlignmentView *av,
     g_string_append(av->outer_target,  target_string);
     if(av->outer_query->len >= av->limit){
         apos = g_new(AlignmentPosition, 1);
-        apos->query_pos  = query_pos;
+        apos->query_pos  = query_pos + 2;
         apos->target_pos = target_pos;
         g_ptr_array_add(av->row_marker, apos);
         av->limit += av->width;
