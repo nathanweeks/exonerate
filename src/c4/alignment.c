@@ -369,15 +369,29 @@ static void AlignmentView_destroy(AlignmentView *av){
     return;
     }
 
+/* Position of the last base displayed after "chars_used" of a unit's
+ * "unit_len" characters, the unit advancing the sequence by "advance"
+ * (a unit may use more chars than bases, eg a 3-letter aa for 1 residue),
+ * interpolated proportionally.  A zero-advance unit (intron/gap label)
+ * emits no base, so the last shown is the preceding unit's: start_pos-1.
+ */
+static gint AlignmentView_get_split_pos(gint start_pos, gint advance,
+                                        gint chars_used, gint unit_len){
+    if(!advance)
+        return (start_pos > 0) ? (start_pos - 1) : start_pos;
+    return start_pos + (((chars_used-1) * advance) / unit_len);
+    }
+
 static void AlignmentView_add(AlignmentView *av,
                               gchar *query_string,
                               gchar *inner_query_string,
                               gchar *match_string,
                               gchar *inner_target_string,
                               gchar *target_string,
-                              gint query_pos, gint target_pos){
+                              gint query_pos, gint target_pos,
+                              gint advance_query, gint advance_target){
     register AlignmentPosition *apos;
-    register gint i;
+    register gint i, prev_len, unit_len, chars_used;
     g_assert(strlen(query_string) == strlen(match_string));
     g_assert(strlen(match_string) == strlen(target_string));
     if(av->inner_query){
@@ -400,13 +414,18 @@ static void AlignmentView_add(AlignmentView *av,
                 g_string_append_c(av->inner_target, ' ');
             }
         }
+    prev_len = av->outer_query->len;
     g_string_append(av->outer_query,  query_string);
     g_string_append(av->middle, match_string);
     g_string_append(av->outer_target,  target_string);
-    if(av->outer_query->len >= av->limit){
+    unit_len = av->outer_query->len - prev_len;
+    while(av->outer_query->len >= av->limit){
+        chars_used = av->limit - prev_len;
         apos = g_new(AlignmentPosition, 1);
-        apos->query_pos  = query_pos;
-        apos->target_pos = target_pos;
+        apos->query_pos  = AlignmentView_get_split_pos(query_pos,
+                                advance_query, chars_used, unit_len);
+        apos->target_pos = AlignmentView_get_split_pos(target_pos,
+                                advance_target, chars_used, unit_len);
         g_ptr_array_add(av->row_marker, apos);
         av->limit += av->width;
         }
@@ -523,7 +542,9 @@ static void AlignmentView_add_MATCH(AlignmentView *av,
         AlignmentView_add(av, query_string, inner_query_string,
                               match_string,
                               inner_target_string, target_string,
-                              curr_query_pos, curr_target_pos);
+                              curr_query_pos, curr_target_pos,
+                              transition->advance_query,
+                              transition->advance_target);
         g_free(query_string);
         g_free(target_string);
         curr_query_pos += transition->advance_query;
@@ -590,14 +611,16 @@ static void AlignmentView_add_GAP(AlignmentView *av,
                                   match_string,
                                   is_translating?gap_string:NULL,
                                   gap_string,
-                                  curr_query_pos, curr_target_pos);
+                                  curr_query_pos, curr_target_pos,
+                                  advance_query, advance_target);
         else
             AlignmentView_add(av, gap_string,
                                   is_translating?gap_string:NULL,
                                   match_string,
                                   tr_codon_name,
                                   seq_string,
-                                  curr_query_pos, curr_target_pos);
+                                  curr_query_pos, curr_target_pos,
+                                  advance_query, advance_target);
         curr_query_pos += advance_query;
         curr_target_pos += advance_target;
         }
@@ -672,18 +695,21 @@ static void AlignmentView_add_SPLICE_SITE(AlignmentView *av,
             AlignmentView_add(av, qy_seq_string,
                           qy_cons_string, gap_string, tg_cons_string,
                           tg_seq_string,
-                          query_pos, target_pos);
+                          query_pos, target_pos,
+                          advance_query, advance_target);
         } else { /* Query intron */
             g_assert(advance_target == 0);
             strdown(qy_seq_string);
             g_assert(last_match);
             if(last_match->advance_query == 3)
                 AlignmentView_add(av, qy_seq_string, qy_cons_string, gap_string,
-                                  gap_string, gap_string, query_pos, target_pos);
+                                  gap_string, gap_string, query_pos, target_pos,
+                                  advance_query, advance_target);
             else
                 AlignmentView_add(av, qy_seq_string,
                                   NULL, qy_cons_string, NULL,
-                                  gap_string, query_pos, target_pos);
+                                  gap_string, query_pos, target_pos,
+                                  advance_query, advance_target);
             }
     } else { /* Target intron */
         g_assert(advance_query == 0);
@@ -693,11 +719,13 @@ static void AlignmentView_add_SPLICE_SITE(AlignmentView *av,
         if(last_match->advance_target == 3)
             AlignmentView_add(av, gap_string, gap_string,
                               gap_string, tg_cons_string, tg_seq_string,
-                              query_pos, target_pos);
+                              query_pos, target_pos,
+                              advance_query, advance_target);
         else
             AlignmentView_add(av, gap_string,
                               NULL, tg_cons_string, NULL,
-                              tg_seq_string, query_pos, target_pos);
+                              tg_seq_string, query_pos, target_pos,
+                              advance_query, advance_target);
         }
     return;
     }
@@ -746,22 +774,27 @@ static void AlignmentView_add_INTRON(AlignmentView *av,
     if(advance_query){
         if(advance_target){ /* joint intron */
             AlignmentView_add(av, name_string, NULL, middle_string, NULL,
-                              name_string, query_pos, target_pos);
+                              name_string, query_pos, target_pos,
+                              advance_query, advance_target);
         } else { /* query intron */
             if(last_match->advance_query == 3)
                 AlignmentView_add(av, gap_string, pad_string, middle_string,
-                                  pad_string, name_string, query_pos, target_pos);
+                                  pad_string, name_string, query_pos, target_pos,
+                                  advance_query, advance_target);
             else
                 AlignmentView_add(av, gap_string, NULL, middle_string, NULL,
-                                  name_string, query_pos, target_pos);
+                                  name_string, query_pos, target_pos,
+                                  advance_query, advance_target);
             }
     } else { /* target intron */
         if(last_match->advance_target == 3)
             AlignmentView_add(av, name_string, pad_string, middle_string,
-                              pad_string, gap_string, query_pos, target_pos);
+                              pad_string, gap_string, query_pos, target_pos,
+                              advance_query, advance_target);
         else
             AlignmentView_add(av, name_string, NULL, middle_string, NULL,
-                              gap_string, query_pos, target_pos);
+                              gap_string, query_pos, target_pos,
+                              advance_query, advance_target);
         }
     g_free(label);
     g_free(name_string);
@@ -804,7 +837,8 @@ static void AlignmentView_add_NER(AlignmentView *av,
     g_free(middle_string);
     g_free(lower_string);
     AlignmentView_add(av, upper_padded, NULL, middle_padded, NULL,
-                      lower_padded, query_pos, target_pos);
+                      lower_padded, query_pos, target_pos,
+                      advance_query, advance_target);
     g_free(upper_padded);
     g_free(middle_padded);
     g_free(lower_padded);
@@ -1026,7 +1060,8 @@ static void AlignmentView_add_SPLIT_CODON(AlignmentView *av,
     g_assert(target_string);
     AlignmentView_add(av, query_string, inner_query_string,
                       match_string, inner_target_string,
-                      target_string, query_pos, target_pos);
+                      target_string, query_pos, target_pos,
+                      advance_query, advance_target);
     g_free(query_string);
     g_free(match_string);
     g_free(target_string);
@@ -1075,14 +1110,16 @@ static void AlignmentView_add_FRAMESHIFT(AlignmentView *av,
                                   match_string,
                                   gap_string,
                                   gap_string,
-                                  curr_query_pos, curr_target_pos);
+                                  curr_query_pos, curr_target_pos,
+                                  advance_query, advance_target);
         else
             AlignmentView_add(av, gap_string,
                                   gap_string,
                                   match_string,
                                   match_string,
                                   seq_string,
-                                  curr_query_pos, curr_target_pos);
+                                  curr_query_pos, curr_target_pos,
+                                  advance_query, advance_target);
         curr_query_pos += advance_query;
         curr_target_pos += advance_target;
         }
