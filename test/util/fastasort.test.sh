@@ -26,11 +26,15 @@ do
        echo Sorted $IDENTIFIER $LENGTH
     else
        echo Sorting failure: $PREV_ID $PREV_LEN : $IDENTIFIER $LENGTH
-       clean_exit 1
+       exit 1
     fi
     PREV_ID=$IDENTIFIER
     PREV_LEN=$LENGTH
 done
+if [ $? -ne 0 ]
+then
+    clean_exit 1
+fi
 
 clean_exit 0
 

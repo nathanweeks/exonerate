@@ -38,10 +38,15 @@ $FASTALENGTH $UNFORMATTEDFILE | ( read UNFORMATTEDLEN ID
             echo Reformatted length consistent
         else
             echo Reformatted length different
-            clean_exit 1
+            exit 1
         fi
         )
+    exit $?
     )
+if [ $? -ne 0 ]
+then
+    clean_exit 1
+fi
 
 clean_exit 0
 

@@ -34,14 +34,22 @@ check_length(){
             echo RC length is the same
         else
             echo RC length changed
-            clean_exit 1
+            exit 1
         fi
         )
-    return
+    return $?
     }
 
 check_length $CALM_RC
+if [ $? -ne 0 ]
+then
+    clean_exit 1
+fi
 check_length $CALM_RCRC
+if [ $? -ne 0 ]
+then
+    clean_exit 1
+fi
 
 $FASTADIFF -c no $CALM $CALM_RCRC
 if [ $? -eq 0 ]

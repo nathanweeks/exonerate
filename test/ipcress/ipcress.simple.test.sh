@@ -9,7 +9,7 @@ OUTPUTFILE="test.ipcress.out"
 
 clean_exit(){
     rm -f $IPCRESSFILE $OUTPUTFILE
-    exit $?
+    exit $1
     }
 
 cat > $IPCRESSFILE << EOF
