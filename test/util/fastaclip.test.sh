@@ -33,9 +33,13 @@ $FASTALENGTH $CLIPPEDFILE | (read LENGTH IDENTIFIER
         echo Clipped input correctly
     else
         echo "Clipping error (length $LENGTH)"
-        clean_exit 1
+        exit 1
     fi
     )
+if [ $? -ne 0 ]
+then
+    clean_exit 1
+fi
 
 clean_exit 0
 

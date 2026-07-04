@@ -8,7 +8,7 @@ OUTPUTFILE="exonerate.simple.test.out"
 
 clean_exit(){
     rm -f $OUTPUTFILE
-    exit $?
+    exit $1
     }
 
 $EXONERATE --bestn 1 --showvulgar yes \

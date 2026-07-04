@@ -16,7 +16,7 @@ $FASTAINDEX $INPUTFILE $INDEXFILE
 if [ $? -ne 0 ]
 then
     echo Error with $FASTAINDEX
-    exit $?
+    exit 1
 else
     echo Made index $INDEXFILE
 fi
