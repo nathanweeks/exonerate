@@ -39,15 +39,21 @@ fi
 
 QUERY_ROW1_END=`grep -m1 -E '^ *1 : [ACGT]+ : ' $OUTPUTFILE | awk '{print $NF}'`
 QUERY_ROW2_START=`grep -m1 -E '^ *12 : [ACGT]+ : ' $OUTPUTFILE | awk '{print $1}'`
+TARGET_ROW1_END=`grep -m1 -E '^ *1 : MetGlyArgAl : ' $OUTPUTFILE | awk '{print $NF}'`
+TARGET_ROW2_START=`grep -m1 -E '^ *[0-9]+ : aArgProGlyG : ' $OUTPUTFILE | awk '{print $1}'`
 
 # The row should end/resume showing the actual base at that column (a
 # split codon's bases still belong to consecutive, non-overlapping
 # nucleotide positions): row 1 ends at base 11, row 2 resumes at base 12.
-if [ "$QUERY_ROW1_END" = "11" ] && [ "$QUERY_ROW2_START" = "12" ]
+# The target is shown as three-letter amino acid names.  The same residue
+# can span the row boundary, so row 2 starts with the remainder of target
+# residue 4, not residue 5.
+if [ "$QUERY_ROW1_END" = "11" ] && [ "$QUERY_ROW2_START" = "12" ] \
+   && [ "$TARGET_ROW1_END" = "4" ] && [ "$TARGET_ROW2_START" = "4" ]
 then
-    echo "Query coordinates as expected: $QUERY_ROW1_END / $QUERY_ROW2_START"
+    echo "Coordinates as expected: query $QUERY_ROW1_END / $QUERY_ROW2_START target $TARGET_ROW1_END / $TARGET_ROW2_START"
 else
-    echo "Unexpected query coordinates: row1 end=$QUERY_ROW1_END row2 start=$QUERY_ROW2_START"
+    echo "Unexpected coordinates: query row1 end=$QUERY_ROW1_END row2 start=$QUERY_ROW2_START target row1 end=$TARGET_ROW1_END row2 start=$TARGET_ROW2_START"
     clean_exit 1
 fi
 

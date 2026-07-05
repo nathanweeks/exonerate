@@ -59,4 +59,19 @@ else
     clean_exit 1
 fi
 
+# The target (genome) is contiguous across the intron, so its row
+# coordinates must stay continuous even though the intron is drawn
+# compressed as dots: the row ending inside the intron ends at target
+# base 74, and the next row must resume at 75 (not skip ahead).
+TARGET_INTRON_END=`grep 'ATGAACCTAGgt' $OUTPUTFILE | awk '{print $NF}'`
+TARGET_RESUME_START=`grep 'agGTTCCAAGACTGCATGGACTA' $OUTPUTFILE | awk '{print $1}'`
+
+if [ "$TARGET_INTRON_END" = "74" ] && [ "$TARGET_RESUME_START" = "75" ]
+then
+    echo "Target coordinates as expected: $TARGET_INTRON_END / $TARGET_RESUME_START"
+else
+    echo "Unexpected target coordinates: intron end=$TARGET_INTRON_END resume start=$TARGET_RESUME_START"
+    clean_exit 1
+fi
+
 clean_exit 0
