@@ -1,6 +1,6 @@
 
 TESTS = exonerate.simple.test.sh exonerate.dna2protein.alignment.test.sh \
-        exonerate.est2genome.alignment.test.sh
+        exonerate.est2genome.alignment.test.sh exonerate.comment.test.sh
 
 EXTRA_DIST = $(TESTS)
 
