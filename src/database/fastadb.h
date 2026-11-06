@@ -86,7 +86,10 @@ CompoundFile_Pos  FastaDB_find_next_start(FastaDB *fdb,
                                           CompoundFile_Pos pos);
 
     gboolean FastaDB_file_is_fasta(gchar *path);
-    /* Returns true if first non-whitespace character in file is '>' */
+    /* Returns true if first non-whitespace character in file is '>',
+     * skipping any leading comment lines starting with ';'
+     * (or if the file contains only comment lines)
+     */
 
 typedef struct {
                 FastaDB *source;

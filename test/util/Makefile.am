@@ -6,7 +6,7 @@ TESTS = fastaclean.test.sh fastaclip.test.sh fastacomposition.test.sh \
         fastaremove.test.sh fastarevcomp.test.sh                      \
         fastasoftmask.fastahardmask.test.sh fastasort.test.sh         \
         fastasplit.test.sh fastasubseq.test.sh fastatranslate.test.sh \
-        fastavalidcds.test.sh
+        fastavalidcds.test.sh fasta.comment.test.sh
 
 EXTRA_DIST = $(TESTS)
 

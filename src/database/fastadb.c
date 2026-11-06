@@ -242,7 +242,12 @@ CompoundFile_Pos FastaDB_find_next_start(FastaDB *fdb,
                                          CompoundFile_Pos pos){
     register gint ch, prev = '\n';
     g_assert(fdb->cf->element_list->len == 1);
-    CompoundFile_seek(fdb->cf, pos);
+    if(pos > 0){ /* Only accept a '>' at the start of a line */
+        CompoundFile_seek(fdb->cf, pos-1);
+        prev = CompoundFile_getc(fdb->cf);
+    } else {
+        CompoundFile_seek(fdb->cf, pos);
+        }
     while((ch = CompoundFile_getc(fdb->cf)) != EOF){
         if((ch == '>') && (prev == '\n'))
             break;
@@ -254,12 +259,19 @@ CompoundFile_Pos FastaDB_find_next_start(FastaDB *fdb,
 gboolean FastaDB_file_is_fasta(gchar *path){
     register FILE *fp = fopen(path, "r");
     register gint ch;
-    register gboolean result = FALSE;
+    register gboolean result = FALSE, seen_comment = FALSE;
     if(!fp)
         g_error("Could not open file [%s]", path);
     while(((ch = getc(fp)) != EOF)){
         if(isspace(ch))
             continue;
+        else
+            if(ch == ';'){ /* Skip comment line */
+                seen_comment = TRUE;
+                while(((ch = getc(fp)) != EOF) && (ch != '\n'));
+                if(ch == EOF)
+                    break;
+                }
         else
             if(ch == '>'){ /* Assume is fasta format */
                 result = TRUE;
@@ -268,11 +280,16 @@ gboolean FastaDB_file_is_fasta(gchar *path){
         else
             break;
         }
+    if((ch == EOF) && seen_comment) /* Only comments: no sequences */
+        result = TRUE;
     fclose(fp);
     return result;
     }
 /* Assumes a file is fasta format
- * if the first non-whitespace character is '>'
+ * if the first non-whitespace character is '>',
+ * ignoring any leading comment lines starting with ';'
+ * (the original Pearson FASTA comment convention).
+ * A file containing only comment lines is also treated as fasta.
  */
 
 gboolean FastaDB_is_finished(FastaDB *fdb){
@@ -343,12 +360,41 @@ FastaDB_Seq *FastaDB_Seq_revcomp(FastaDB_Seq *fdbs){
 
 /**/
 
+static gint FastaDB_skip_line(CompoundFile *cf){
+    register gint ch;
+    while((ch = CompoundFile_getc(cf)) != EOF)
+        if(ch == '\n')
+            break;
+    return ch;
+    }
+
+static gboolean FastaDB_is_comment(CompoundFile *cf, gint ch,
+                                  gboolean *at_line_start, gint *element_id){
+    register gboolean is_comment;
+    if(cf->curr_element_id != *element_id){ /* Started next file */
+        *element_id = cf->curr_element_id;
+        *at_line_start = TRUE;
+        }
+    is_comment = (*at_line_start && (ch == ';'));
+    *at_line_start = (ch == '\n')
+                  || (*at_line_start && ((ch == ' ') || (ch == '\t')));
+    return is_comment;
+    }
+/* Lines starting with ';' within the sequence data are comments,
+ * e.g. the leading comments of the second and later files of a
+ * multi-file database (comments before the first '>' of the first file
+ * are skipped by FastaDB_rewind()).
+ */
+
 FastaDB_Seq *FastaDB_next(FastaDB *fdb, FastaDB_Mask mask){
     register FastaDB_Seq *fdbs;
     register gint ch;
     register gint id_pos = -1, def_pos = -1, seq_pos = -1,
                   seq_len = -1;
     register gint prev_len = -1, curr_length, line_start_seq_pos;
+    register gboolean after_comment = FALSE;
+    gboolean at_line_start = TRUE;
+    gint element_id = fdb->cf->curr_element_id;
     register Sequence *seq;
     register CompoundFile_Location *location
            = CompoundFile_Location_tell(fdb->cf);
@@ -398,7 +444,17 @@ FastaDB_Seq *FastaDB_next(FastaDB *fdb, FastaDB_Mask mask){
         line_start_seq_pos = seq_pos;
         while(((ch = CompoundFile_getc(fdb->cf)) != EOF)
             && (ch != '>')){
+            if(FastaDB_is_comment(fdb->cf, ch,
+                                  &at_line_start, &element_id)){
+                if(FastaDB_skip_line(fdb->cf) == EOF)
+                    break;
+                at_line_start = TRUE;
+                after_comment = TRUE;
+                continue;
+                }
             if(Alphabet_symbol_is_valid(fdb->alphabet, ch)){
+                if(after_comment) /* Sequence offsets no longer regular */
+                    fdb->line_length = 0;
                 FastaDB_putc(fdb, ch);
             } else if(isspace(ch)){
                 if(ch == '\n'){
@@ -434,6 +490,13 @@ FastaDB_Seq *FastaDB_next(FastaDB *fdb, FastaDB_Mask mask){
         seq_len = 0;
         while(((ch = CompoundFile_getc(fdb->cf)) != EOF)
             && (ch != '>')){
+            if(FastaDB_is_comment(fdb->cf, ch,
+                                  &at_line_start, &element_id)){
+                if(FastaDB_skip_line(fdb->cf) == EOF)
+                    break;
+                at_line_start = TRUE;
+                continue;
+                }
             if( ((ch >= 'A') && (ch <= 'Z'))
              || ((ch >= 'a') && (ch <= 'z'))){
                 seq_len++;
@@ -443,6 +506,13 @@ FastaDB_Seq *FastaDB_next(FastaDB *fdb, FastaDB_Mask mask){
         while((ch = CompoundFile_getc(fdb->cf)) != EOF){
             if(ch == '>')
                 break;
+            if(FastaDB_is_comment(fdb->cf, ch,
+                                  &at_line_start, &element_id)){
+                if(FastaDB_skip_line(fdb->cf) == EOF)
+                    break;
+                at_line_start = TRUE;
+                continue;
+                }
             }
         }
     seq = Sequence_create(

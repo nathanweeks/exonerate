@@ -1125,7 +1125,7 @@ static GPtrArray *Analysis_FOSN_expand_path_list(GPtrArray *path_list){
         path = path_list->pdata[i];
         if((stat(path, &buf))              /* Cannot read file (ie. servername) */
         || (S_ISDIR(buf.st_mode))          /* Is directory */
-        || (FastaDB_file_is_fasta(path))){ /* 1st non-whitespace char is '>' */
+        || (FastaDB_file_is_fasta(path))){ /* 1st non-comment char is '>' */
             npath = g_strdup(path);
             g_ptr_array_add(npath_list, npath);
         } else { /* Assume to be fosn */
@@ -1156,8 +1156,9 @@ static GPtrArray *Analysis_FOSN_expand_path_list(GPtrArray *path_list){
     return npath_list;
     }
 /* If members of the path list are files
- * where the first non-whitespace character is not '>',
- * it is assumed to be a FOSN, and parsed to expand the path_list.
+ * where the first non-whitespace character (after any leading
+ * ';' comment lines) is not '>', it is assumed to be a FOSN,
+ * and parsed to expand the path_list.
  */
 
 Analysis *Analysis_create(
